@@ -37,5 +37,14 @@
       "resources": ["icons/*.png"],
       "matches": ["https://*.instructure.com/*"]
     }
-  ]
+  ],
+  "browser_specific_settings": {
+      "gecko": {
+          "id": "@canvalier",
+          "strict_min_version": "58.0",
+          "data_collection_permissions": {
+              "required": ["none"]
+          }
+      }
+  }
 }
