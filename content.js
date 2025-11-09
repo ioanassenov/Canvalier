@@ -185,6 +185,9 @@ const CACHE_VERSION = 2;
 // Track if we're currently in initial load
 let isInitialLoading = false;
 
+// Track if options box observer has been set up
+let optionsBoxObserverSetup = false;
+
 // Extension settings
 const extensionSettings = {
   canvalierEnabled: true, // Default to extension being enabled
@@ -1836,6 +1839,66 @@ function insertOptionsBox() {
   }
 }
 
+// Setup observer to ensure options box always exists on dashboard
+function setupOptionsBoxObserver() {
+  // Only set up once
+  if (optionsBoxObserverSetup) {
+    log('⏭️', 'Options box observer already set up, skipping...');
+    return;
+  }
+
+  log('🔄', 'Setting up options box observer...');
+
+  // Observe the right sidebar for any DOM changes
+  const observer = new MutationObserver((mutations) => {
+    // Check if we're still on the dashboard
+    if (!window.location.pathname.includes('/dashboard') && window.location.pathname !== '/') {
+      return; // Not on dashboard, don't insert
+    }
+
+    // Check if options box is missing
+    if (!document.getElementById('canvas-extension-options')) {
+      log('🔧', 'OBSERVER: Options box missing! Re-inserting...');
+      insertOptionsBox();
+    }
+  });
+
+  // Watch the right sidebar for changes
+  const rightSidebar = document.querySelector('#right-side');
+  if (rightSidebar) {
+    observer.observe(rightSidebar, {
+      childList: true,
+      subtree: false // Only watch direct children of sidebar
+    });
+    log('✅', 'Options box observer active on right sidebar');
+  }
+
+  // Also watch the body for when the right sidebar itself might be re-created
+  const bodyObserver = new MutationObserver((mutations) => {
+    // Check if we're still on the dashboard
+    if (!window.location.pathname.includes('/dashboard') && window.location.pathname !== '/') {
+      return;
+    }
+
+    // Check if options box is missing
+    if (!document.getElementById('canvas-extension-options')) {
+      const rightSidebar = document.querySelector('#right-side');
+      if (rightSidebar) {
+        log('🔧', 'BODY OBSERVER: Options box missing! Re-inserting...');
+        insertOptionsBox();
+      }
+    }
+  });
+
+  bodyObserver.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+
+  log('✅', 'Options box body observer active');
+  optionsBoxObserverSetup = true;
+}
+
 // Monitor for Canvas re-renders and re-insert summaries
 function setupPersistenceObserver() {
   log('🔄', 'Setting up persistence observer...');
@@ -2131,6 +2194,9 @@ async function init() {
 
     // ALWAYS insert options box (so users can toggle Canvalier on/off)
     insertOptionsBox();
+
+    // ALWAYS setup options box observer (to keep it visible on dashboard)
+    setupOptionsBoxObserver();
 
     // Check if Canvalier is enabled
     if (extensionSettings.canvalierEnabled) {
