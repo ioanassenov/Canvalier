@@ -195,6 +195,34 @@
 
 .ic-DashboardCard__header {
   position: relative;
+  overflow: hidden; /* Ensures images respect the header's rounded corners */
+}
+
+/* Custom image layer - positioned to fill the visual header area */
+.canvalier-custom-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 146px; /* Match Canvas's default header image height */
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  z-index: 0; /* Behind everything */
+  border-radius: 4px 4px 0 0; /* Match card's top rounded corners */
+  pointer-events: none; /* Don't interfere with clicks */
+}
+
+/* Ensure the hero overlay sits above the custom image */
+.ic-DashboardCard__header_hero {
+  position: relative;
+  z-index: 1;
+}
+
+/* Ensure the course link and content sit above the image */
+.ic-DashboardCard__link {
+  position: relative;
+  z-index: 2;
 }
 
 /* Options Box Styles */
