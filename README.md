@@ -171,5 +171,5 @@ To contribute or report issues:
 
 - **Manifest Version**: 3
 - **Canvas API Version**: v1
-- **Compatible**: Chrome, Edge, and other Chromium-based browsers
+- **Compatible**: Browsers based on Chromium, Gecko, Webkit. Tested on Google Chrome, Arc, Firefox, and Safari.
 - **Canvas Compatibility**: Tested with modern Canvas LMS instances
