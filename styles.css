@@ -225,6 +225,18 @@
   z-index: 2;
 }
 
+/* Ensure the 3-dot menu button sits above everything */
+.ic-DashboardCard__header > div:last-child {
+  position: relative;
+  z-index: 3;
+}
+
+/* More specific selector for the button container */
+.ic-DashboardCard__header-button {
+  position: relative;
+  z-index: 3;
+}
+
 /* Options Box Styles */
 .canvas-options-box {
   background-color: #ffffff;
