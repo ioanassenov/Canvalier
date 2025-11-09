@@ -1,4 +1,4 @@
-# Canvas LMS Assignment Summary Extension
+# Canvalier for Canvas
 
 A Chrome extension that integrates with Canvas LMS to display assignment summaries directly under course cards on your dashboard.
 
