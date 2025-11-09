@@ -110,9 +110,9 @@ const browserAPI = (() => {
           if (!match) return;
 
           const courseId = match[1];
-          // Target the actual image container, not the overlay
-          const headerImage = card.querySelector('.ic-DashboardCard__header_image');
-          if (!headerImage) return;
+          // Target the header container for the background image
+          const header = card.querySelector('.ic-DashboardCard__header');
+          if (!header) return;
 
           const customImageUrl = result.customImages[courseId];
           if (customImageUrl) {
@@ -120,9 +120,9 @@ const browserAPI = (() => {
             const hero = card.querySelector('.ic-DashboardCard__header_hero');
 
             // Save original background image for later restoration
-            if (!headerImage.getAttribute('data-canvalier-original-bg-image')) {
-              const originalBgImage = window.getComputedStyle(headerImage).backgroundImage;
-              headerImage.setAttribute('data-canvalier-original-bg-image', originalBgImage);
+            if (!header.getAttribute('data-canvalier-original-bg-image')) {
+              const originalBgImage = window.getComputedStyle(header).backgroundImage;
+              header.setAttribute('data-canvalier-original-bg-image', originalBgImage);
             }
 
             // Save original hero opacity and color if this is the first time
@@ -135,18 +135,18 @@ const browserAPI = (() => {
               hero.setAttribute('data-canvalier-original-color', originalColor);
             }
 
-            // Update the background-image URL directly
-            headerImage.style.backgroundImage = `url('${customImageUrl}')`;
-            headerImage.style.backgroundSize = 'cover';
-            headerImage.style.backgroundPosition = 'center';
+            // Update the background-image URL directly on the header
+            header.style.backgroundImage = `url('${customImageUrl}')`;
+            header.style.backgroundSize = 'cover';
+            header.style.backgroundPosition = 'center';
 
             // Adjust the hero overlay opacity based on user setting
             if (hero) {
               hero.style.opacity = String(opacity);
             }
 
-            headerImage.setAttribute('data-canvalier-image-applied', customImageUrl);
-            headerImage.setAttribute('data-canvalier-current-opacity', String(opacity));
+            header.setAttribute('data-canvalier-image-applied', customImageUrl);
+            header.setAttribute('data-canvalier-current-opacity', String(opacity));
             appliedCount++;
           }
         });
@@ -1083,21 +1083,21 @@ function applyCustomImages() {
     const courseId = getCourseId(card);
     if (!courseId) return;
 
-    // Target the actual image container, not the overlay
-    const headerImage = card.querySelector('.ic-DashboardCard__header_image');
-    if (!headerImage) return;
+    // Target the header container for the background image
+    const header = card.querySelector('.ic-DashboardCard__header');
+    if (!header) return;
 
     const customImageUrl = extensionSettings.customImages[courseId];
-    const currentlyApplied = headerImage.getAttribute('data-canvalier-image-applied');
+    const currentlyApplied = header.getAttribute('data-canvalier-image-applied');
 
     if (customImageUrl) {
       // Get the hero overlay element to adjust its opacity
       const hero = card.querySelector('.ic-DashboardCard__header_hero');
 
       // Save original background image if this is the first time applying a custom image
-      if (!headerImage.getAttribute('data-canvalier-original-bg-image')) {
-        const originalBgImage = window.getComputedStyle(headerImage).backgroundImage;
-        headerImage.setAttribute('data-canvalier-original-bg-image', originalBgImage);
+      if (!header.getAttribute('data-canvalier-original-bg-image')) {
+        const originalBgImage = window.getComputedStyle(header).backgroundImage;
+        header.setAttribute('data-canvalier-original-bg-image', originalBgImage);
       }
 
       // Save original hero opacity and color if this is the first time
@@ -1111,33 +1111,33 @@ function applyCustomImages() {
       }
 
       // Reapply if image changed OR if opacity changed
-      const currentOpacity = headerImage.getAttribute('data-canvalier-current-opacity');
+      const currentOpacity = header.getAttribute('data-canvalier-current-opacity');
       const opacityChanged = currentOpacity !== String(opacity);
       if (currentlyApplied !== customImageUrl || opacityChanged) {
-        // Update the background-image URL directly
-        headerImage.style.backgroundImage = `url('${customImageUrl}')`;
-        headerImage.style.backgroundSize = 'cover';
-        headerImage.style.backgroundPosition = 'center';
+        // Update the background-image URL directly on the header
+        header.style.backgroundImage = `url('${customImageUrl}')`;
+        header.style.backgroundSize = 'cover';
+        header.style.backgroundPosition = 'center';
 
         // Adjust the hero overlay opacity based on user setting
         if (hero) {
           hero.style.opacity = String(opacity);
         }
 
-        headerImage.setAttribute('data-canvalier-image-applied', customImageUrl);
-        headerImage.setAttribute('data-canvalier-current-opacity', String(opacity));
+        header.setAttribute('data-canvalier-image-applied', customImageUrl);
+        header.setAttribute('data-canvalier-current-opacity', String(opacity));
         changedCount++;
       }
     } else {
       // Remove custom image if it was previously set but now removed
       if (currentlyApplied) {
         // Restore the original background image
-        const originalBgImage = headerImage.getAttribute('data-canvalier-original-bg-image');
+        const originalBgImage = header.getAttribute('data-canvalier-original-bg-image');
         if (originalBgImage) {
-          headerImage.style.backgroundImage = originalBgImage;
+          header.style.backgroundImage = originalBgImage;
         }
-        headerImage.style.backgroundSize = '';
-        headerImage.style.backgroundPosition = '';
+        header.style.backgroundSize = '';
+        header.style.backgroundPosition = '';
 
         // Restore original hero opacity
         const hero = card.querySelector('.ic-DashboardCard__header_hero');
@@ -1148,9 +1148,9 @@ function applyCustomImages() {
           }
         }
 
-        headerImage.removeAttribute('data-canvalier-image-applied');
-        headerImage.removeAttribute('data-canvalier-current-opacity');
-        headerImage.removeAttribute('data-canvalier-original-bg-image');
+        header.removeAttribute('data-canvalier-image-applied');
+        header.removeAttribute('data-canvalier-current-opacity');
+        header.removeAttribute('data-canvalier-original-bg-image');
         if (hero) {
           hero.removeAttribute('data-canvalier-original-opacity');
           hero.removeAttribute('data-canvalier-original-color');
@@ -1182,8 +1182,8 @@ function setupColorChangeObserver() {
           // Check if the parent card has a custom image applied
           const card = hero.closest('.ic-DashboardCard');
           if (card) {
-            const headerImage = card.querySelector('.ic-DashboardCard__header_image');
-            if (headerImage && headerImage.getAttribute('data-canvalier-image-applied')) {
+            const header = card.querySelector('.ic-DashboardCard__header');
+            if (header && header.getAttribute('data-canvalier-image-applied')) {
               needsReapply = true;
             }
           }
@@ -2116,7 +2116,7 @@ function disableCanvalierEffects() {
   // Restore original images and colors on course cards
   const cards = document.querySelectorAll('.ic-DashboardCard');
   cards.forEach(card => {
-    const header = card.querySelector('.ic-DashboardCard__header_image');
+    const header = card.querySelector('.ic-DashboardCard__header');
     const overlay = card.querySelector('.ic-DashboardCard__header_hero');
 
     // Restore original background image
@@ -2126,6 +2126,7 @@ function disableCanvalierEffects() {
         header.style.backgroundImage = originalBgImage;
         header.removeAttribute('data-canvalier-original-bg-image');
         header.removeAttribute('data-canvalier-image-applied');
+        header.removeAttribute('data-canvalier-current-opacity');
         log('🖼️', 'Restored original image for card');
       }
     }
