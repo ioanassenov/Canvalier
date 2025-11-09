@@ -43,8 +43,9 @@ const browserAPI = (() => {
 // IMMEDIATELY start checking for banner to hide it ASAP (before anything else loads)
 // This runs before settings load, so we check the setting from storage directly
 (async function() {
-  const result = await browserAPI.storage.local.get(['hideDashboardHeader']);
-  if (result.hideDashboardHeader === true) {
+  const result = await browserAPI.storage.local.get(['canvalierEnabled', 'hideDashboardHeader']);
+  // Only hide if Canvalier is enabled (or undefined, meaning first run)
+  if ((result.canvalierEnabled === undefined || result.canvalierEnabled === true) && result.hideDashboardHeader === true) {
       console.log('🚀 Starting immediate banner hiding...');
 
       const hideCarouselBanner = () => {
@@ -90,8 +91,9 @@ const browserAPI = (() => {
 // IMMEDIATELY apply custom images ASAP (before main init)
 // This prevents flashing of default images
 (async function() {
-  const result = await browserAPI.storage.local.get(['customImages', 'imageOpacity']);
-  if (result.customImages && Object.keys(result.customImages).length > 0) {
+  const result = await browserAPI.storage.local.get(['canvalierEnabled', 'customImages', 'imageOpacity']);
+  // Only apply if Canvalier is enabled (or undefined, meaning first run)
+  if ((result.canvalierEnabled === undefined || result.canvalierEnabled === true) && result.customImages && Object.keys(result.customImages).length > 0) {
       console.log('🚀 Starting immediate custom image application...');
 
       const applyImages = () => {
@@ -185,6 +187,7 @@ let isInitialLoading = false;
 
 // Extension settings
 const extensionSettings = {
+  canvalierEnabled: true, // Default to extension being enabled
   use24HourFormat: false, // Default to 12-hour format
   showOverdue: true, // Default to showing overdue assignments
   showTimeRemaining: false, // Default to showing due date instead of time remaining
@@ -201,8 +204,11 @@ const extensionSettings = {
 
 // Load settings from browser storage
 async function loadSettings() {
-  const result = await browserAPI.storage.local.get(['use24HourFormat', 'showOverdue', 'showTimeRemaining', 'assignmentRangeWeeks', 'minimizedCardCount', 'hideCanvasToDo', 'hideDashboardHeader', 'hideRecentFeedback', 'hideComingUp', 'customImages', 'markedDone']);
+  const result = await browserAPI.storage.local.get(['canvalierEnabled', 'use24HourFormat', 'showOverdue', 'showTimeRemaining', 'assignmentRangeWeeks', 'minimizedCardCount', 'hideCanvasToDo', 'hideDashboardHeader', 'hideRecentFeedback', 'hideComingUp', 'customImages', 'markedDone']);
 
+  if (result.canvalierEnabled !== undefined) {
+    extensionSettings.canvalierEnabled = result.canvalierEnabled;
+  }
   if (result.use24HourFormat !== undefined) {
     extensionSettings.use24HourFormat = result.use24HourFormat;
   }
@@ -1554,6 +1560,13 @@ function createOptionsBox() {
     </div>
     <div class="canvas-options-content">
       <div class="canvas-options-inner">
+        <div class="canvas-option-item canvas-option-master-toggle">
+          <span class="canvas-option-label" style="font-weight: bold;">Enable Canvalier</span>
+          <label class="canvas-toggle-switch">
+            <input type="checkbox" id="canvalier-enabled-toggle" ${extensionSettings.canvalierEnabled ? 'checked' : ''}>
+            <span class="canvas-toggle-slider"></span>
+          </label>
+        </div>
         <div class="canvas-option-item canvas-option-slider-item">
           <div class="canvas-slider-container">
             <label class="canvas-option-label" id="assignment-range-label">${getRangeLabel(extensionSettings.assignmentRangeWeeks)}</label>
@@ -1624,6 +1637,29 @@ function createOptionsBox() {
   header.addEventListener('click', () => {
     optionsBox.classList.toggle('expanded');
     log('🔧', `Options box ${optionsBox.classList.contains('expanded') ? 'expanded' : 'collapsed'}`);
+  });
+
+  // Add Canvalier enabled/disabled toggle functionality
+  const canvalierEnabledToggle = optionsBox.querySelector('#canvalier-enabled-toggle');
+  canvalierEnabledToggle.addEventListener('change', async (e) => {
+    const isEnabled = e.target.checked;
+    await saveSetting('canvalierEnabled', isEnabled);
+    log('🎚️', `Canvalier ${isEnabled ? 'enabled' : 'disabled'}`);
+
+    // Notify popup to update its toggle (if it's open)
+    try {
+      await browserAPI.storage.local.set({ canvalierEnabled: isEnabled });
+    } catch (error) {
+      console.error('Error syncing toggle state:', error);
+    }
+
+    if (isEnabled) {
+      // Enable all Canvalier effects
+      await enableCanvalierEffects();
+    } else {
+      // Disable all Canvalier effects
+      disableCanvalierEffects();
+    }
   });
 
   // Add 24-hour format toggle functionality
@@ -1893,6 +1929,90 @@ function setupPersistenceObserver() {
   }, 2000);
 }
 
+// Disable all Canvalier effects (restore Canvas to normal state)
+function disableCanvalierEffects() {
+  log('🛑', 'Disabling Canvalier effects...');
+
+  // Remove all assignment summaries
+  const summaries = document.querySelectorAll('.assignment-summary');
+  summaries.forEach(summary => summary.remove());
+  log('🗑️', `Removed ${summaries.length} assignment summaries`);
+
+  // Remove all loading placeholders
+  const placeholders = document.querySelectorAll('.assignment-summary-loading');
+  placeholders.forEach(placeholder => placeholder.remove());
+  log('🗑️', `Removed ${placeholders.length} loading placeholders`);
+
+  // Restore Canvas To Do list
+  const todoContainer = document.querySelector('.Sidebar__TodoListContainer');
+  if (todoContainer) {
+    todoContainer.style.display = '';
+    log('👁️', 'Canvas To Do list restored');
+  }
+
+  // Restore Recent Feedback column
+  const recentFeedbackColumn = document.querySelector('.events_list.recent_feedback');
+  if (recentFeedbackColumn) {
+    recentFeedbackColumn.style.display = '';
+    log('👁️', 'Recent Feedback column restored');
+  }
+
+  // Restore Coming Up section
+  const comingUpSection = document.querySelector('#right-side > div.events_list.coming_up');
+  if (comingUpSection) {
+    comingUpSection.style.display = '';
+    log('👁️', 'Coming Up section restored');
+  }
+
+  // Restore dashboard banner/carousel
+  const iframes = document.querySelectorAll('iframe');
+  for (const iframe of iframes) {
+    const src = iframe.src || '';
+    if (src.includes('carousel')) {
+      const containerDiv = iframe.parentElement;
+      if (containerDiv) {
+        containerDiv.style.display = '';
+        log('👁️', 'Dashboard banner restored');
+      }
+    }
+  }
+
+  // Restore original custom images (remove custom images)
+  const cards = document.querySelectorAll('.ic-DashboardCard');
+  cards.forEach(card => {
+    const header = card.querySelector('.ic-DashboardCard__header_image');
+    const overlay = card.querySelector('.ic-DashboardCard__header_hero');
+    if (header && header.dataset.originalImage) {
+      header.style.backgroundImage = header.dataset.originalImage;
+      log('🖼️', 'Restored original image for card');
+    }
+    if (overlay && overlay.dataset.originalColor) {
+      overlay.style.backgroundColor = overlay.dataset.originalColor;
+      overlay.style.opacity = '1';
+      log('🎨', 'Restored original color for card');
+    }
+  });
+
+  log('✅', 'All Canvalier effects disabled');
+}
+
+// Enable all Canvalier effects (apply based on settings)
+async function enableCanvalierEffects() {
+  log('🚀', 'Enabling Canvalier effects...');
+
+  // Apply all UI changes
+  applyCanvasToDoVisibility();
+  applyRecentFeedbackVisibility();
+  applyComingUpVisibility();
+  applyDashboardHeaderVisibility();
+  applyCustomImages();
+
+  // Reprocess all course cards to add assignment summaries
+  await processCourseCards();
+
+  log('✅', 'All Canvalier effects enabled');
+}
+
 // Initialize extension
 async function init() {
   log('🚀', 'Initializing Canvas Assignment Summary Extension...');
@@ -1917,20 +2037,31 @@ async function init() {
       waitForDashboard()   // Required: need course cards to exist
     ]);
 
-    // IMMEDIATELY show UI - don't wait for ANYTHING else
-    applyCanvasToDoVisibility();
-    applyRecentFeedbackVisibility();
-    applyComingUpVisibility();
-    applyCustomImages();
+    // ALWAYS insert options box (so users can toggle Canvalier on/off)
     insertOptionsBox();
 
-    // Kick off ALL background work in parallel - don't await any of it
-    cleanupMarkedDone();           // Runs async, doesn't block
-    prefetchAllAssignments();      // Runs async, doesn't block
-    processCourseCards();          // Runs async, shows loading then fills in data
-    setupPersistenceObserver();    // Runs sync, non-blocking
-    setupCustomImageTabObserver(); // Runs sync, watches for hamburger menus
-    setupColorChangeObserver();    // Runs sync, watches for color changes
+    // Check if Canvalier is enabled
+    if (extensionSettings.canvalierEnabled) {
+      log('✅', 'Canvalier is enabled, applying effects...');
+
+      // IMMEDIATELY show UI - don't wait for ANYTHING else
+      applyCanvasToDoVisibility();
+      applyRecentFeedbackVisibility();
+      applyComingUpVisibility();
+      applyCustomImages();
+
+      // Kick off ALL background work in parallel - don't await any of it
+      cleanupMarkedDone();           // Runs async, doesn't block
+      prefetchAllAssignments();      // Runs async, doesn't block
+      processCourseCards();          // Runs async, shows loading then fills in data
+      setupPersistenceObserver();    // Runs sync, non-blocking
+      setupCustomImageTabObserver(); // Runs sync, watches for hamburger menus
+      setupColorChangeObserver();    // Runs sync, watches for color changes
+    } else {
+      log('🛑', 'Canvalier is disabled, skipping effects...');
+      // Ensure Canvas is in normal state (in case it was previously enabled)
+      disableCanvalierEffects();
+    }
 
     // Mark as done immediately - background work continues on its own
     isInitialLoading = false;
@@ -1954,3 +2085,54 @@ new MutationObserver(() => {
     setTimeout(init, 1000); // Wait for Canvas to render
   }
 }).observe(document, { subtree: true, childList: true });
+
+// Listen for messages from popup
+if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.type === 'canvalierToggleChanged') {
+      log('📬', `Received toggle change message from popup: ${message.enabled}`);
+
+      // Update the setting
+      extensionSettings.canvalierEnabled = message.enabled;
+
+      // Update the toggle in options box if it exists
+      const optionsToggle = document.querySelector('#canvalier-enabled-toggle');
+      if (optionsToggle) {
+        optionsToggle.checked = message.enabled;
+      }
+
+      // Apply or remove effects
+      if (message.enabled) {
+        enableCanvalierEffects();
+      } else {
+        disableCanvalierEffects();
+      }
+
+      sendResponse({ success: true });
+    }
+  });
+} else if (typeof browser !== 'undefined' && browser.runtime && browser.runtime.onMessage) {
+  browser.runtime.onMessage.addListener((message, sender) => {
+    if (message.type === 'canvalierToggleChanged') {
+      log('📬', `Received toggle change message from popup: ${message.enabled}`);
+
+      // Update the setting
+      extensionSettings.canvalierEnabled = message.enabled;
+
+      // Update the toggle in options box if it exists
+      const optionsToggle = document.querySelector('#canvalier-enabled-toggle');
+      if (optionsToggle) {
+        optionsToggle.checked = message.enabled;
+      }
+
+      // Apply or remove effects
+      if (message.enabled) {
+        enableCanvalierEffects();
+      } else {
+        disableCanvalierEffects();
+      }
+
+      return Promise.resolve({ success: true });
+    }
+  });
+}
