@@ -1,0 +1,525 @@
+/* Canvas Assignment Summary Styles */
+
+.canvas-summary-container {
+  padding: 16px;
+  background-color: #f5f5f5;
+  border-top: 1px solid #e1e1e1;
+  margin: 0;
+  font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.canvas-summary-loading {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+}
+
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.loading-spinner::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  border: 2px solid #e1e1e1;
+  border-top-color: #2d3b45;
+  border-radius: 50%;
+  animation: spinner 0.6s linear infinite;
+}
+
+@keyframes spinner {
+  to { transform: rotate(360deg); }
+}
+
+.canvas-summary-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  color: #2d3b45;
+  font-size: 14px;
+}
+
+.summary-icon {
+  font-size: 16px;
+}
+
+.canvas-summary-empty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #4caf50;
+  font-size: 14px;
+}
+
+.canvas-summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.canvas-summary-item {
+  display: block;
+  padding: 10px;
+  background-color: white;
+  border-left: 3px solid #0374b5;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.canvas-summary-item.overdue {
+  border-left-color: #d32f2f;
+}
+
+.canvas-summary-item.marked-done {
+  opacity: 0.6;
+  background-color: #f5f5f5;
+  border-left-color: #4caf50;
+}
+
+.canvas-summary-item.marked-done-overdue {
+  border-left-color: #4caf50;
+}
+
+.canvas-summary-item:hover {
+  transform: translateX(2px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.canvas-summary-item.marked-done:hover {
+  opacity: 0.8;
+}
+
+.assignment-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+  min-width: 0;
+}
+
+.assignment-title-link {
+  font-weight: 600;
+  color: #2d3b45;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+  max-width: fit-content;
+}
+
+.assignment-title-link:hover {
+  color: #0374b5;
+  text-decoration: underline;
+}
+
+.assignment-marked-done-icon {
+  color: #4caf50;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.canvas-summary-item.marked-done .assignment-title-link {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.canvas-summary-item.marked-done .assignment-due::before {
+  content: none;
+  display: none;
+}
+
+.assignment-due {
+  font-size: 12px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.assignment-overdue-label {
+  font-size: 11px;
+  color: #999;
+  margin-left: 6px;
+}
+
+.assignment-due::before {
+  content: "🔵";
+  font-size: 12px;
+}
+
+.canvas-summary-item.overdue .assignment-due::before {
+  content: "⚠️";
+}
+
+.assignment-due.urgent::before {
+  content: "🔴";
+}
+
+.assignment-due.soon::before {
+  content: "🟡";
+}
+
+.canvas-summary-more {
+  margin-top: 8px;
+  text-align: center;
+  color: #0374b5;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px;
+  background-color: rgba(3, 116, 181, 0.1);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.canvas-summary-more:hover {
+  background-color: rgba(3, 116, 181, 0.2);
+}
+
+/* Adjust card spacing */
+.ic-DashboardCard {
+  overflow: visible !important;
+}
+
+.ic-DashboardCard__header {
+  position: relative;
+}
+
+/* Options Box Styles */
+.canvas-options-box {
+  background-color: #ffffff;
+  border: 1px solid #c7cdd1;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.canvas-options-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background-color: #f5f5f5;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid #c7cdd1;
+  transition: background-color 0.2s ease;
+}
+
+.canvas-options-header:hover {
+  background-color: #eeeeee;
+}
+
+.canvas-options-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #2d3b45;
+}
+
+.canvas-options-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+.canvas-options-toggle-icon {
+  font-size: 12px;
+  transition: transform 0.3s ease;
+  color: #666;
+}
+
+.canvas-options-box.expanded .canvas-options-toggle-icon {
+  transform: rotate(180deg);
+}
+
+.canvas-options-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.canvas-options-box.expanded .canvas-options-content {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.canvas-options-inner {
+  padding: 16px;
+}
+
+/* Toggle Switch Styles */
+.canvas-option-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.canvas-option-label {
+  font-size: 14px;
+  color: #2d3b45;
+  font-weight: 500;
+  flex: 1;
+  min-width: 0;
+}
+
+.canvas-toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.canvas-toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.canvas-toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border-radius: 24px;
+}
+
+.canvas-toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+.canvas-toggle-switch input:checked + .canvas-toggle-slider {
+  background-color: #0374b5;
+}
+
+.canvas-toggle-switch input:checked + .canvas-toggle-slider:before {
+  transform: translateX(20px);
+}
+
+.canvas-toggle-switch input:focus + .canvas-toggle-slider {
+  box-shadow: 0 0 1px #0374b5;
+}
+
+/* Range Slider Styles */
+.canvas-option-slider-item {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.canvas-slider-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.canvas-slider-container .canvas-option-label {
+  text-align: center;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.canvas-range-slider {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(to right, #0374b5 0%, #0374b5 100%);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.canvas-range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #0374b5;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.canvas-range-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.canvas-range-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #0374b5;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.canvas-range-slider::-moz-range-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.canvas-range-slider::-moz-range-track {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #d3d3d3;
+  border: none;
+}
+
+/* Canvas Color Tab Enhancements */
+/* Make the Color tab panel taller and scrollable to accommodate our additions */
+[role="tabpanel"] .css-1ynk9jn-view-panel__content {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Ensure the panel container can grow */
+.css-18p99wu-tabs__panelsContainer [role="tabpanel"] {
+  max-height: 500px;
+}
+
+/* Style the canvalier enhancements to match Canvas's design */
+.canvalier-color-enhancements {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Style the opacity slider to match Canvas's design */
+.canvalier-opacity-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #d3d3d3;
+  outline: none;
+  cursor: pointer;
+}
+
+.canvalier-opacity-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #0374b5;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.canvalier-opacity-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.canvalier-opacity-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #0374b5;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.canvalier-opacity-slider::-moz-range-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.canvalier-opacity-slider::-moz-range-track {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #d3d3d3;
+  border: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .canvas-summary-container {
+    padding: 12px;
+  }
+
+  .canvas-summary-item {
+    padding: 8px;
+  }
+
+  .assignment-title {
+    font-size: 13px;
+  }
+
+  .assignment-due {
+    font-size: 11px;
+  }
+
+  .canvas-options-box {
+    margin-bottom: 12px;
+  }
+
+  .canvas-options-header {
+    padding: 10px 12px;
+  }
+
+  .canvas-options-inner {
+    padding: 12px;
+  }
+
+  .canvas-option-item {
+    padding: 10px;
+  }
+}
