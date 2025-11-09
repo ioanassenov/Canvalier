@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canvalier</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 300px;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+    }
+
+    .popup-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .popup-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .popup-icon {
+      width: 32px;
+      height: 32px;
+    }
+
+    .popup-title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .popup-version {
+      font-size: 11px;
+      opacity: 0.7;
+      margin-left: auto;
+    }
+
+    .toggle-section {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 16px;
+      border-radius: 8px;
+      backdrop-filter: blur(10px);
+    }
+
+    .toggle-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .toggle-label {
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .toggle-description {
+      font-size: 12px;
+      opacity: 0.8;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
+    /* Toggle Switch Styles */
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.3);
+      transition: 0.3s;
+      border-radius: 26px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .toggle-slider {
+      background-color: #4CAF50;
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(24px);
+    }
+
+    .popup-footer {
+      text-align: center;
+      font-size: 11px;
+      opacity: 0.7;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .popup-footer a {
+      color: #fff;
+      text-decoration: none;
+      opacity: 0.9;
+    }
+
+    .popup-footer a:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+
+    .status-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+      background-color: #4CAF50;
+      animation: pulse 2s infinite;
+    }
+
+    .status-indicator.disabled {
+      background-color: #f44336;
+      animation: none;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="popup-container">
+    <div class="popup-header">
+      <img src="icons/icon48.png" alt="Canvalier" class="popup-icon">
+      <div>
+        <div class="popup-title">Canvalier</div>
+      </div>
+      <span class="popup-version">v1.0.0</span>
+    </div>
+
+    <div class="toggle-section">
+      <div class="toggle-container">
+        <div style="flex: 1;">
+          <div class="toggle-label">
+            <span class="status-indicator" id="status-indicator"></span>
+            Enable Extension
+          </div>
+          <div class="toggle-description">
+            Toggle Canvalier features on/off
+          </div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="canvalier-toggle">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="popup-footer">
+      Supercharge your Canvas dashboard!
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

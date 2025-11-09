@@ -4,11 +4,21 @@
   "version": "1.0.0",
   "description": "Supercharge your Canvas dashboard!",
   "permissions": [
-    "storage"
+    "storage",
+    "activeTab"
   ],
   "host_permissions": [
     "https://*.instructure.com/*"
   ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "Canvalier"
+  },
   "content_scripts": [
     {
       "matches": ["https://*.instructure.com/*"],
