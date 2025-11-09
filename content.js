@@ -1165,6 +1165,11 @@ function applyCustomImages() {
 // Watch for color changes via Canvas's color picker and maintain opacity
 function setupColorChangeObserver() {
   const observer = new MutationObserver((mutations) => {
+    // Only observe if Canvalier is enabled
+    if (!extensionSettings.canvalierEnabled) {
+      return;
+    }
+
     let needsReapply = false;
 
     mutations.forEach((mutation) => {
@@ -1501,6 +1506,11 @@ function setupCustomImageTabObserver() {
               const hasMoveTab = Array.from(tabs).some(tab => tab.textContent.includes('Move'));
 
               if (hasColorTab && hasMoveTab) {
+                // Only inject tabs if Canvalier is enabled
+                if (!extensionSettings.canvalierEnabled) {
+                  return;
+                }
+
                 // This is a course card menu, find the course ID
                 // Look for the button that triggered this popover
                 const triggerButton = document.querySelector('[data-popover-trigger="true"][aria-expanded="true"]');
@@ -1669,10 +1679,13 @@ function createOptionsBox() {
     saveSetting('use24HourFormat', use24Hour);
     log('🕐', `Time format changed to ${use24Hour ? '24-hour' : '12-hour'}`);
 
-    // Refresh all assignment summaries to show new time format
-    const cards = document.querySelectorAll('.ic-DashboardCard');
-    for (const card of cards) {
-      await addSummaryToCard(card);
+    // Only apply if Canvalier is enabled
+    if (extensionSettings.canvalierEnabled) {
+      // Refresh all assignment summaries to show new time format
+      const cards = document.querySelectorAll('.ic-DashboardCard');
+      for (const card of cards) {
+        await addSummaryToCard(card);
+      }
     }
   });
 
@@ -1683,10 +1696,13 @@ function createOptionsBox() {
     saveSetting('showOverdue', showOverdue);
     log('📅', `Show overdue: ${showOverdue}`);
 
-    // Refresh all assignment summaries to show/hide overdue
-    const cards = document.querySelectorAll('.ic-DashboardCard');
-    for (const card of cards) {
-      await addSummaryToCard(card);
+    // Only apply if Canvalier is enabled
+    if (extensionSettings.canvalierEnabled) {
+      // Refresh all assignment summaries to show/hide overdue
+      const cards = document.querySelectorAll('.ic-DashboardCard');
+      for (const card of cards) {
+        await addSummaryToCard(card);
+      }
     }
   });
 
@@ -1697,10 +1713,13 @@ function createOptionsBox() {
     saveSetting('showTimeRemaining', showTimeRemaining);
     log('⏱️', `Show time remaining: ${showTimeRemaining}`);
 
-    // Refresh all assignment summaries to show time remaining
-    const cards = document.querySelectorAll('.ic-DashboardCard');
-    for (const card of cards) {
-      await addSummaryToCard(card);
+    // Only apply if Canvalier is enabled
+    if (extensionSettings.canvalierEnabled) {
+      // Refresh all assignment summaries to show time remaining
+      const cards = document.querySelectorAll('.ic-DashboardCard');
+      for (const card of cards) {
+        await addSummaryToCard(card);
+      }
     }
   });
 
@@ -1715,10 +1734,13 @@ function createOptionsBox() {
     const rangeText = weeks >= 11 ? 'all upcoming assignments' : `${weeks} week${weeks !== 1 ? 's' : ''}`;
     log('📆', `Assignment range changed to: ${rangeText}`);
 
-    // Refresh all assignment summaries with new range
-    const cards = document.querySelectorAll('.ic-DashboardCard');
-    for (const card of cards) {
-      await addSummaryToCard(card);
+    // Only apply if Canvalier is enabled
+    if (extensionSettings.canvalierEnabled) {
+      // Refresh all assignment summaries with new range
+      const cards = document.querySelectorAll('.ic-DashboardCard');
+      for (const card of cards) {
+        await addSummaryToCard(card);
+      }
     }
   });
 
@@ -1733,10 +1755,13 @@ function createOptionsBox() {
     const countText = count >= 11 ? 'expand all cards' : `show ${count} card${count !== 1 ? 's' : ''}`;
     log('🔢', `Card count changed to: ${countText}`);
 
-    // Refresh all assignment summaries with new card count
-    const cards = document.querySelectorAll('.ic-DashboardCard');
-    for (const card of cards) {
-      await addSummaryToCard(card);
+    // Only apply if Canvalier is enabled
+    if (extensionSettings.canvalierEnabled) {
+      // Refresh all assignment summaries with new card count
+      const cards = document.querySelectorAll('.ic-DashboardCard');
+      for (const card of cards) {
+        await addSummaryToCard(card);
+      }
     }
   });
 
@@ -1746,7 +1771,10 @@ function createOptionsBox() {
     const hideToDo = e.target.checked;
     saveSetting('hideCanvasToDo', hideToDo);
     log('📋', `Hide Canvas To Do: ${hideToDo}`);
-    applyCanvasToDoVisibility();
+    // Only apply if Canvalier is enabled
+    if (extensionSettings.canvalierEnabled) {
+      applyCanvasToDoVisibility();
+    }
   });
 
   // Add hide dashboard header toggle functionality
@@ -1755,7 +1783,10 @@ function createOptionsBox() {
     const hideHeader = e.target.checked;
     saveSetting('hideDashboardHeader', hideHeader);
     log('🎯', `Hide Dashboard Header: ${hideHeader}`);
-    applyDashboardHeaderVisibility();
+    // Only apply if Canvalier is enabled
+    if (extensionSettings.canvalierEnabled) {
+      applyDashboardHeaderVisibility();
+    }
   });
 
   // Add hide recent feedback toggle functionality
@@ -1764,7 +1795,10 @@ function createOptionsBox() {
     const hideRecentFeedback = e.target.checked;
     saveSetting('hideRecentFeedback', hideRecentFeedback);
     log('📝', `Hide Recent Feedback: ${hideRecentFeedback}`);
-    applyRecentFeedbackVisibility();
+    // Only apply if Canvalier is enabled
+    if (extensionSettings.canvalierEnabled) {
+      applyRecentFeedbackVisibility();
+    }
   });
 
   // Add hide coming up toggle functionality
@@ -1773,7 +1807,10 @@ function createOptionsBox() {
     const hideComingUp = e.target.checked;
     saveSetting('hideComingUp', hideComingUp);
     log('📅', `Hide Coming Up: ${hideComingUp}`);
-    applyComingUpVisibility();
+    // Only apply if Canvalier is enabled
+    if (extensionSettings.canvalierEnabled) {
+      applyComingUpVisibility();
+    }
   });
 
   return optionsBox;
@@ -1812,6 +1849,11 @@ function setupPersistenceObserver() {
     const debounceTime = isInitialLoading ? 0 : 100;
 
     debounceTimer = setTimeout(() => {
+      // Only reinsert if Canvalier is enabled
+      if (!extensionSettings.canvalierEnabled) {
+        return;
+      }
+
       // Check if any course cards are missing summaries
       const cards = document.querySelectorAll('.ic-DashboardCard');
       let reinserted = 0;
@@ -1870,28 +1912,31 @@ function setupPersistenceObserver() {
       return; // Stop the loop
     }
 
-    const cards = document.querySelectorAll('.ic-DashboardCard');
+    // Only insert placeholders if Canvalier is enabled
+    if (extensionSettings.canvalierEnabled) {
+      const cards = document.querySelectorAll('.ic-DashboardCard');
 
-    cards.forEach(card => {
-      if (!card.querySelector('.canvas-summary-container')) {
-        if (!hasInsertedInitial) {
-          log('⚡', 'Inserting loading placeholders after Canvas stabilized');
-          hasInsertedInitial = true;
+      cards.forEach(card => {
+        if (!card.querySelector('.canvas-summary-container')) {
+          if (!hasInsertedInitial) {
+            log('⚡', 'Inserting loading placeholders after Canvas stabilized');
+            hasInsertedInitial = true;
+          }
+
+          const loadingDiv = document.createElement('div');
+          loadingDiv.className = 'canvas-summary-container canvas-summary-loading';
+          loadingDiv.innerHTML = '<div class="loading-spinner">Loading assignments...</div>';
+
+          const cardHeader = card.querySelector('.ic-DashboardCard__header');
+          const insertionPoint = cardHeader || card.querySelector('.ic-DashboardCard__header_hero');
+          if (insertionPoint) {
+            insertionPoint.insertAdjacentElement('afterend', loadingDiv);
+          }
         }
+      });
+    }
 
-        const loadingDiv = document.createElement('div');
-        loadingDiv.className = 'canvas-summary-container canvas-summary-loading';
-        loadingDiv.innerHTML = '<div class="loading-spinner">Loading assignments...</div>';
-
-        const cardHeader = card.querySelector('.ic-DashboardCard__header');
-        const insertionPoint = cardHeader || card.querySelector('.ic-DashboardCard__header_hero');
-        if (insertionPoint) {
-          insertionPoint.insertAdjacentElement('afterend', loadingDiv);
-        }
-      }
-    });
-
-    // Also insert options box at the same time if it doesn't exist
+    // Always insert options box if it doesn't exist (needed for toggle control)
     if (!document.getElementById('canvas-extension-options')) {
       insertOptionsBox();
     }
@@ -1909,19 +1954,22 @@ function setupPersistenceObserver() {
       return;
     }
 
-    const cards = document.querySelectorAll('.ic-DashboardCard');
-    const summaries = document.querySelectorAll('.canvas-summary-container');
+    // Only reinsert summaries if Canvalier is enabled
+    if (extensionSettings.canvalierEnabled) {
+      const cards = document.querySelectorAll('.ic-DashboardCard');
+      const summaries = document.querySelectorAll('.canvas-summary-container');
 
-    if (cards.length > 0 && summaries.length === 0) {
-      log('🔔', 'POLLING: Summaries missing! Re-inserting...');
-      cards.forEach(card => {
-        if (!card.querySelector('.canvas-summary-container')) {
-          addSummaryToCard(card);
-        }
-      });
+      if (cards.length > 0 && summaries.length === 0) {
+        log('🔔', 'POLLING: Summaries missing! Re-inserting...');
+        cards.forEach(card => {
+          if (!card.querySelector('.canvas-summary-container')) {
+            addSummaryToCard(card);
+          }
+        });
+      }
     }
 
-    // Also check if options box is missing
+    // Always check if options box is missing (needed for toggle control)
     if (!document.getElementById('canvas-extension-options')) {
       log('🔔', 'POLLING: Options box missing! Re-inserting...');
       insertOptionsBox();
@@ -1933,7 +1981,12 @@ function setupPersistenceObserver() {
 function disableCanvalierEffects() {
   log('🛑', 'Disabling Canvalier effects...');
 
-  // Remove all assignment summaries
+  // Remove all assignment summary containers
+  const summaryContainers = document.querySelectorAll('.canvas-summary-container');
+  summaryContainers.forEach(container => container.remove());
+  log('🗑️', `Removed ${summaryContainers.length} assignment summary containers`);
+
+  // Remove all assignment summaries (backup, in case containers are missing)
   const summaries = document.querySelectorAll('.assignment-summary');
   summaries.forEach(summary => summary.remove());
   log('🗑️', `Removed ${summaries.length} assignment summaries`);
@@ -1942,6 +1995,26 @@ function disableCanvalierEffects() {
   const placeholders = document.querySelectorAll('.assignment-summary-loading');
   placeholders.forEach(placeholder => placeholder.remove());
   log('🗑️', `Removed ${placeholders.length} loading placeholders`);
+
+  // Remove custom image tabs from all hamburger menus
+  const customImageTabs = document.querySelectorAll('.canvalier-custom-image-tab');
+  customImageTabs.forEach(tab => {
+    // Also remove the associated panel
+    const panelId = tab.getAttribute('aria-controls');
+    if (panelId) {
+      const panel = document.getElementById(panelId);
+      if (panel) {
+        panel.remove();
+      }
+    }
+    tab.remove();
+  });
+  log('🗑️', `Removed ${customImageTabs.length} custom image tabs`);
+
+  // Remove color tab enhancements from all hamburger menus
+  const colorEnhancements = document.querySelectorAll('.canvalier-color-enhancements');
+  colorEnhancements.forEach(enhancement => enhancement.remove());
+  log('🗑️', `Removed ${colorEnhancements.length} color tab enhancements`);
 
   // Restore Canvas To Do list
   const todoContainer = document.querySelector('.Sidebar__TodoListContainer');
@@ -1977,19 +2050,38 @@ function disableCanvalierEffects() {
     }
   }
 
-  // Restore original custom images (remove custom images)
+  // Restore original images and colors on course cards
   const cards = document.querySelectorAll('.ic-DashboardCard');
   cards.forEach(card => {
     const header = card.querySelector('.ic-DashboardCard__header_image');
     const overlay = card.querySelector('.ic-DashboardCard__header_hero');
-    if (header && header.dataset.originalImage) {
-      header.style.backgroundImage = header.dataset.originalImage;
-      log('🖼️', 'Restored original image for card');
+
+    // Restore original background image
+    if (header) {
+      const originalBgImage = header.getAttribute('data-canvalier-original-bg-image');
+      if (originalBgImage) {
+        header.style.backgroundImage = originalBgImage;
+        header.removeAttribute('data-canvalier-original-bg-image');
+        header.removeAttribute('data-canvalier-image-applied');
+        log('🖼️', 'Restored original image for card');
+      }
     }
-    if (overlay && overlay.dataset.originalColor) {
-      overlay.style.backgroundColor = overlay.dataset.originalColor;
-      overlay.style.opacity = '1';
-      log('🎨', 'Restored original color for card');
+
+    // Restore original opacity and color
+    if (overlay) {
+      const originalOpacity = overlay.getAttribute('data-canvalier-original-opacity');
+      const originalColor = overlay.getAttribute('data-canvalier-original-color');
+
+      if (originalOpacity) {
+        overlay.style.opacity = originalOpacity;
+        overlay.removeAttribute('data-canvalier-original-opacity');
+      }
+
+      if (originalColor) {
+        overlay.style.backgroundColor = originalColor;
+        overlay.removeAttribute('data-canvalier-original-color');
+        log('🎨', 'Restored original color and opacity for card');
+      }
     }
   });
 
