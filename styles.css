@@ -225,16 +225,13 @@
   z-index: 2;
 }
 
-/* Ensure the 3-dot menu button sits above everything */
-.ic-DashboardCard__header > div:last-child {
+/* Ensure the 3-dot menu button and its container sit above everything */
+.ic-DashboardCard__header > div:not(.ic-DashboardCard__header_hero):not(.canvalier-custom-image),
+.ic-DashboardCard__header-button-bg,
+.ic-DashboardCard__header-button,
+[data-position^="Popover"] {
   position: relative;
-  z-index: 3;
-}
-
-/* More specific selector for the button container */
-.ic-DashboardCard__header-button {
-  position: relative;
-  z-index: 3;
+  z-index: 10 !important;
 }
 
 /* Options Box Styles */
