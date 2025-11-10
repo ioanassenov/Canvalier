@@ -24,7 +24,7 @@
       "matches": ["https://*.instructure.com/*"],
       "js": ["content.js"],
       "css": ["styles.css", "dark-mode.css"],
-      "run_at": "document_idle"
+      "run_at": "document_start"
     }
   ],
   "icons": {

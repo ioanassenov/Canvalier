@@ -2284,6 +2284,9 @@ function disableCanvalierEffects() {
     log('🖼️', `Removed ${removedImages} custom image elements and restored original state`);
   }
 
+  // Remove dark mode
+  removeDarkMode();
+
   log('✅', 'All Canvalier effects disabled');
 }
 
