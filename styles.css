@@ -225,7 +225,13 @@
   z-index: 2;
 }
 
-/* IMPORTANT: Don't touch the button container - it has complex Canvas positioning logic */
+/* Ensure the 3-dot button itself sits above the color overlay */
+.ic-DashboardCard__header-button {
+  position: relative;
+  z-index: 3;
+}
+
+/* IMPORTANT: Don't touch the button's outer container div - it has complex Canvas positioning logic */
 
 /* Options Box Styles */
 .canvas-options-box {
