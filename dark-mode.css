@@ -1,6 +1,6 @@
 /* Canvalier Dark Mode - All rules scoped under html.canvalier-dark-mode */
 
-/* Main backgrounds - body and main containers */
+/* Main backgrounds - body and main containers (darkest layer) */
 html.canvalier-dark-mode body,
 html.canvalier-dark-mode #application,
 html.canvalier-dark-mode #main,
@@ -11,7 +11,7 @@ html.canvalier-dark-mode #dashboard-app-container,
 html.canvalier-dark-mode #dashboard_header_container,
 html.canvalier-dark-mode .right-side-wrapper,
 html.canvalier-dark-mode #right-side {
-  background-color: #2b2b2b !important;
+  background-color: #1a1a1a !important;
   color: #c3c3c3 !important;
 }
 
@@ -19,7 +19,7 @@ html.canvalier-dark-mode #right-side {
 html.canvalier-dark-mode #left-side,
 html.canvalier-dark-mode .ic-app-course-menu,
 html.canvalier-dark-mode .ic-app-course-nav-toggle-and-crumbs {
-  background-color: #2b2b2b !important;
+  background-color: #1a1a1a !important;
 }
 
 /* Canvas header */
