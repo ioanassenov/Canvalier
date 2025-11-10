@@ -14,6 +14,7 @@ Canvalier is a Chrome extension that enhances the Canvas LMS dashboard experienc
 - **Expandable Cards**: Configurable number of assignments shown per card (1-11, with 11 = expand all)
 
 ### Customization Options
+- **Dark Mode**: Toggle dark mode for Canvas dashboard with instant application (no white flash)
 - **Custom Course Images**: Replace default course card images with custom URLs
 - **Image Opacity Control**: Adjust color overlay opacity on custom images (0-100%)
 - **Time Format**: Toggle between 12-hour and 24-hour time formats
@@ -36,9 +37,131 @@ Canvalier is a Chrome extension that enhances the Canvas LMS dashboard experienc
 
 ### Files
 - **manifest.json**: Chrome extension manifest (v3)
-- **content.js**: Main content script with all functionality (~1900 lines)
+- **content.js**: Main content script with core functionality (~2100 lines)
+- **modules/**: Modular components loaded via manifest
+  - **options-panel.js**: Options box creation and management (~390 lines)
 - **styles.css**: Styling for assignment summaries and options UI
+- **dark-mode.css**: Dark mode styling
 - **icons/**: Extension icons (16px, 48px, 128px)
+
+### Modular Architecture
+
+The extension uses a **static module loading pattern** that complies with Manifest V3 CSP restrictions while maintaining fast init times.
+
+#### How Modules Work
+
+**1. Static Declaration (manifest.json)**
+```json
+"content_scripts": [{
+  "js": ["modules/options-panel.js", "content.js"],
+  ...
+}]
+```
+
+Modules are declared in the manifest and load **in order**:
+- Module files execute **before** content.js
+- All execute in the **content script context** (not page context)
+- Browser guarantees sequential loading
+
+**2. Module Structure (modules/*.js)**
+```javascript
+'use strict';
+
+const moduleName = {
+  deps: null,
+
+  init(dependencies) {
+    this.deps = dependencies;
+  },
+
+  someMethod() {
+    const { log, saveSetting } = this.deps;
+    // Use dependencies...
+  }
+};
+```
+
+Modules:
+- Declare a global `const moduleName` object
+- Receive dependencies via `init()` method (dependency injection)
+- Access dependencies through `this.deps`
+- No IIFE wrapper needed (file scope provides isolation)
+
+**3. Initialization (content.js)**
+```javascript
+// Module already loaded and available
+moduleName.init({
+  extensionSettings,
+  browserAPI,
+  saveSetting,
+  log,
+  // ... other dependencies
+});
+```
+
+content.js calls `init()` with all dependencies the module needs.
+
+#### Creating New Modules
+
+To add a new module:
+
+1. **Create module file** (`modules/new-module.js`):
+```javascript
+'use strict';
+
+const newModule = {
+  deps: null,
+
+  init(dependencies) {
+    this.deps = dependencies;
+  },
+
+  publicMethod() {
+    // Implementation
+  }
+};
+```
+
+2. **Add to manifest.json** (before content.js):
+```json
+"js": ["modules/new-module.js", "modules/options-panel.js", "content.js"]
+```
+
+3. **Initialize in content.js init()**:
+```javascript
+newModule.init({
+  // Pass required dependencies
+});
+```
+
+4. **Use anywhere in content.js**:
+```javascript
+newModule.publicMethod();
+```
+
+#### Module Loading Benefits
+
+✅ **Manifest V3 Compliant**: No eval, no dynamic imports
+✅ **Content Script Context**: Full access to extension APIs
+✅ **Load Once, Use Many**: No re-execution overhead
+✅ **No Bundler Required**: Maintains fast init times
+✅ **Clear Separation**: Each file is its own module scope
+✅ **Immediate Execution**: No async loading delays
+✅ **Cross-Browser**: Works in Chrome, Firefox, and Safari
+
+#### Timing Guarantees
+
+**Immediate IIFEs** (lines 43-204 in content.js) still run at `document_start`:
+- Dark mode application (prevents white flash)
+- Banner hiding (prevents banner flash)
+- Custom image application (prevents image flash)
+
+These remain in content.js for **immediate execution** before any UI renders.
+
+**Modules** load after IIFEs but before main init:
+- Fully loaded before `init()` runs
+- No blocking or async overhead
+- Available synchronously when needed
 
 ### Key Technologies
 - **Chrome Extension Manifest V3**
@@ -50,6 +173,8 @@ Canvalier is a Chrome extension that enhances the Canvas LMS dashboard experienc
 
 #### Settings Storage
 All settings are stored in `chrome.storage.local`:
+- `canvalierEnabled`: Boolean - Master toggle for extension
+- `darkMode`: Boolean - Dark mode toggle
 - `use24HourFormat`: Boolean
 - `showOverdue`: Boolean
 - `showTimeRemaining`: Boolean
@@ -60,8 +185,15 @@ All settings are stored in `chrome.storage.local`:
 - `hideRecentFeedback`: Boolean
 - `hideComingUp`: Boolean
 - `customImages`: Object `{ "courseId": "imageUrl" }`
-- `imageOpacity`: Number (0-100)
+- `imageOpacityPerCourse`: Object `{ "courseId": opacity }` - Per-course opacity (0-100)
+- `imageOpacity`: Number (deprecated, use imageOpacityPerCourse)
 - `markedDone`: Object `{ "courseId_assignmentId": { markedAt, dueDate } }`
+
+#### Settings Sync
+Settings sync between popup and on-page options via **storage change listeners**:
+- Popup toggle → `storage.local.set()` → Storage change event → Content script updates
+- On-page toggle → `storage.local.set()` → Storage change event → Popup updates
+- No message passing required - storage is the single source of truth
 
 #### Custom Images Integration
 - Injects a "Custom Image" tab into Canvas's native course card hamburger menu
@@ -124,14 +256,14 @@ This allows tracking of external submission assignments.
 - Course state tracking for semester-end cleanup
 - Bulk mark as done functionality
 - Assignment filtering by type (quizzes, discussions, etc.)
-- Dark mode support
 - Import/export settings
 - Sync settings across devices
+- Additional modules: assignment manager, custom images manager, etc.
 
 ## Known Constraints
 - Only works on Canvas LMS dashboard (`/dashboard` or `/`)
 - Requires Canvas API access (authenticated user)
-- Chrome extension only (not Firefox/Safari)
+- Cross-browser compatible (Chrome, Firefox, Safari via WebExtensions API)
 - Relies on Canvas DOM structure (may break with Canvas updates)
 
 ## Testing Considerations
