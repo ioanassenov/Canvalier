@@ -2296,8 +2296,16 @@ async function init() {
       waitForDashboard()   // Required: need course cards to exist
     ]);
 
+    // Start fetching assignments IMMEDIATELY in parallel (don't await)
+    // This happens while we wait for DOM stability, maximizing parallelism
+    if (extensionSettings.canvalierEnabled) {
+      prefetchAllAssignments();      // Starts async, doesn't block
+      cleanupMarkedDone();           // Starts async, doesn't block
+    }
+
     // Wait for Canvas to finish its initial re-render before inserting anything
     // This prevents the flash where Canvas removes our elements
+    // Assignment fetches are happening in parallel during this wait
     await waitForDOMStable();
 
     // ALWAYS insert options box (so users can toggle Canvalier on/off)
@@ -2317,9 +2325,8 @@ async function init() {
       // Note: applyCustomImages() is handled by the immediate IIFE at the top
       // and will be called again by processCourseCards() after loading
 
-      // Kick off ALL background work in parallel - don't await any of it
-      cleanupMarkedDone();           // Runs async, doesn't block
-      prefetchAllAssignments();      // Runs async, doesn't block
+      // Kick off remaining background work in parallel - don't await any of it
+      // (prefetchAllAssignments and cleanupMarkedDone already started above)
       processCourseCards();          // Runs async, shows loading then fills in data
       setupPersistenceObserver();    // Runs sync, non-blocking
       setupCustomImageTabObserver(); // Runs sync, watches for hamburger menus
