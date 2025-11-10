@@ -106,14 +106,20 @@ html.canvalier-dark-mode .ic-Dashboard-header__layout {
   color: #c3c3c3 !important;
 }
 
-/* Right sidebar elements */
-html.canvalier-dark-mode .to-do-list,
-html.canvalier-dark-mode .events_list,
-html.canvalier-dark-mode .coming_up,
-html.canvalier-dark-mode .recent_feedback,
+/* Right sidebar container and headers - transparent to blend with dark background */
 html.canvalier-dark-mode .Sidebar__TodoListContainer,
 html.canvalier-dark-mode .todo-list-header,
+html.canvalier-dark-mode .to-do-list,
 html.canvalier-dark-mode .todo-list,
+html.canvalier-dark-mode .events_list,
+html.canvalier-dark-mode .coming_up,
+html.canvalier-dark-mode .recent_feedback {
+  background-color: transparent !important;
+  color: #c3c3c3 !important;
+  border-color: #555555 !important;
+}
+
+/* Individual todo/event items - keep as cards */
 html.canvalier-dark-mode .to-do-list__item,
 html.canvalier-dark-mode .event-list-item {
   background-color: #373737 !important;
