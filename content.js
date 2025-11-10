@@ -93,21 +93,43 @@ const browserAPI = (() => {
         background-color: #373737 !important;
       }
 
-      /* Course cards - keep them white/light! */
+      /* Course cards - dark styling */
       .ic-DashboardCard {
-        background-color: #ffffff !important;
-        color: #2b2b2b !important;
+        background-color: #373737 !important;
+        border-color: #555555 !important;
+      }
+
+      .ic-DashboardCard__header {
+        background-color: transparent !important;
+      }
+
+      /* Course card title - add dark overlay for readability */
+      .ic-DashboardCard__header-title {
+        color: #ffffff !important;
+        background-color: rgba(0, 0, 0, 0.7) !important;
+        padding: 8px !important;
       }
 
       .ic-DashboardCard__header-subtitle,
       .ic-DashboardCard__header-term {
-        color: #555555 !important;
+        color: #e0e0e0 !important;
       }
 
-      /* Course card action container (footer area) - keep white */
+      /* Course card action container (footer area) */
       .ic-DashboardCard__action-container,
       .ic-DashboardCard__action-layout {
-        background-color: #ffffff !important;
+        background-color: #373737 !important;
+        border-top-color: #555555 !important;
+      }
+
+      .ic-DashboardCard__action-container a,
+      .ic-DashboardCard__action-layout a {
+        color: #7ba3d1 !important;
+      }
+
+      .ic-DashboardCard__action-container button,
+      .ic-DashboardCard__action-layout button {
+        color: #c3c3c3 !important;
       }
 
       /* Dashboard header */
@@ -132,53 +154,100 @@ const browserAPI = (() => {
         border-color: #555555 !important;
       }
 
-      /* Canvas options box - keep light colored like in screenshot */
-      .canvas-options-box,
-      .canvas-options-header,
+      /* Canvas options box - dark theme */
+      .canvas-options-box {
+        background-color: #373737 !important;
+        border-color: #555555 !important;
+      }
+
+      .canvas-options-header {
+        background-color: #2b2b2b !important;
+        border-bottom-color: #555555 !important;
+        color: #c3c3c3 !important;
+      }
+
       .canvas-options-content,
-      .canvas-options-inner,
+      .canvas-options-inner {
+        background-color: #373737 !important;
+      }
+
       .canvas-option-item {
-        background-color: #f5f5f5 !important;
-        color: #2b2b2b !important;
-        border-color: #dddddd !important;
+        background-color: #373737 !important;
+        border-bottom-color: #555555 !important;
       }
 
       .canvas-option-label {
-        color: #2b2b2b !important;
+        color: #c3c3c3 !important;
       }
 
-      /* Assignment summaries - light background for readability */
-      .canvas-summary-container,
-      .assignment-summary {
-        background-color: #2b2b2b !important;
+      .canvas-options-title {
         color: #c3c3c3 !important;
+      }
+
+      /* Assignment summaries - clearly visible on dark background */
+      .canvas-summary-container {
+        background-color: #373737 !important;
         border-color: #555555 !important;
+        padding: 10px !important;
+      }
+
+      .assignment-summary {
+        background-color: #424242 !important;
+        color: #c3c3c3 !important;
+        border-color: #666666 !important;
+        padding: 8px !important;
+        margin-bottom: 8px !important;
+      }
+
+      .assignment-summary:hover {
+        background-color: #4a4a4a !important;
+      }
+
+      .assignment-name {
+        color: #e0e0e0 !important;
       }
 
       .assignment-name a {
         color: #7ba3d1 !important;
       }
 
+      .assignment-name a:hover {
+        color: #9ac0e8 !important;
+      }
+
       .assignment-date {
-        color: #c3c3c3 !important;
+        color: #b0b0b0 !important;
       }
 
       .no-assignments-message {
-        color: #888888 !important;
+        color: #999999 !important;
+        background-color: #373737 !important;
+        padding: 12px !important;
       }
 
       .assignment-summary-loading {
-        background-color: #373737 !important;
+        background-color: #424242 !important;
         color: #888888 !important;
+        padding: 12px !important;
       }
 
       .mark-done-btn {
         background-color: #4a4a4a !important;
         color: #c3c3c3 !important;
-        border-color: #555555 !important;
+        border-color: #666666 !important;
       }
 
       .mark-done-btn:hover {
+        background-color: #5a5a5a !important;
+      }
+
+      .show-more-btn {
+        background-color: #4a4a4a !important;
+        color: #c3c3c3 !important;
+        border-color: #666666 !important;
+      }
+
+      .show-more-btn:hover {
         background-color: #5a5a5a !important;
       }
 
@@ -2499,21 +2568,43 @@ function applyDarkMode() {
       background-color: #373737 !important;
     }
 
-    /* Course cards - keep them white/light! */
+    /* Course cards - dark styling */
     .ic-DashboardCard {
-      background-color: #ffffff !important;
-      color: #2b2b2b !important;
+      background-color: #373737 !important;
+      border-color: #555555 !important;
+    }
+
+    .ic-DashboardCard__header {
+      background-color: transparent !important;
+    }
+
+    /* Course card title - add dark overlay for readability */
+    .ic-DashboardCard__header-title {
+      color: #ffffff !important;
+      background-color: rgba(0, 0, 0, 0.7) !important;
+      padding: 8px !important;
     }
 
     .ic-DashboardCard__header-subtitle,
     .ic-DashboardCard__header-term {
-      color: #555555 !important;
+      color: #e0e0e0 !important;
     }
 
-    /* Course card action container (footer area) - keep white */
+    /* Course card action container (footer area) */
     .ic-DashboardCard__action-container,
     .ic-DashboardCard__action-layout {
-      background-color: #ffffff !important;
+      background-color: #373737 !important;
+      border-top-color: #555555 !important;
+    }
+
+    .ic-DashboardCard__action-container a,
+    .ic-DashboardCard__action-layout a {
+      color: #7ba3d1 !important;
+    }
+
+    .ic-DashboardCard__action-container button,
+    .ic-DashboardCard__action-layout button {
+      color: #c3c3c3 !important;
     }
 
     /* Dashboard header */
@@ -2538,53 +2629,100 @@ function applyDarkMode() {
       border-color: #555555 !important;
     }
 
-    /* Canvas options box - keep light colored like in screenshot */
-    .canvas-options-box,
-    .canvas-options-header,
+    /* Canvas options box - dark theme */
+    .canvas-options-box {
+      background-color: #373737 !important;
+      border-color: #555555 !important;
+    }
+
+    .canvas-options-header {
+      background-color: #2b2b2b !important;
+      border-bottom-color: #555555 !important;
+      color: #c3c3c3 !important;
+    }
+
     .canvas-options-content,
-    .canvas-options-inner,
+    .canvas-options-inner {
+      background-color: #373737 !important;
+    }
+
     .canvas-option-item {
-      background-color: #f5f5f5 !important;
-      color: #2b2b2b !important;
-      border-color: #dddddd !important;
+      background-color: #373737 !important;
+      border-bottom-color: #555555 !important;
     }
 
     .canvas-option-label {
-      color: #2b2b2b !important;
+      color: #c3c3c3 !important;
     }
 
-    /* Assignment summaries - light background for readability */
-    .canvas-summary-container,
-    .assignment-summary {
-      background-color: #2b2b2b !important;
+    .canvas-options-title {
       color: #c3c3c3 !important;
+    }
+
+    /* Assignment summaries - clearly visible on dark background */
+    .canvas-summary-container {
+      background-color: #373737 !important;
       border-color: #555555 !important;
+      padding: 10px !important;
+    }
+
+    .assignment-summary {
+      background-color: #424242 !important;
+      color: #c3c3c3 !important;
+      border-color: #666666 !important;
+      padding: 8px !important;
+      margin-bottom: 8px !important;
+    }
+
+    .assignment-summary:hover {
+      background-color: #4a4a4a !important;
+    }
+
+    .assignment-name {
+      color: #e0e0e0 !important;
     }
 
     .assignment-name a {
       color: #7ba3d1 !important;
     }
 
+    .assignment-name a:hover {
+      color: #9ac0e8 !important;
+    }
+
     .assignment-date {
-      color: #c3c3c3 !important;
+      color: #b0b0b0 !important;
     }
 
     .no-assignments-message {
-      color: #888888 !important;
+      color: #999999 !important;
+      background-color: #373737 !important;
+      padding: 12px !important;
     }
 
     .assignment-summary-loading {
-      background-color: #373737 !important;
+      background-color: #424242 !important;
       color: #888888 !important;
+      padding: 12px !important;
     }
 
     .mark-done-btn {
       background-color: #4a4a4a !important;
       color: #c3c3c3 !important;
-      border-color: #555555 !important;
+      border-color: #666666 !important;
     }
 
     .mark-done-btn:hover {
+      background-color: #5a5a5a !important;
+    }
+
+    .show-more-btn {
+      background-color: #4a4a4a !important;
+      color: #c3c3c3 !important;
+      border-color: #666666 !important;
+    }
+
+    .show-more-btn:hover {
       background-color: #5a5a5a !important;
     }
 
