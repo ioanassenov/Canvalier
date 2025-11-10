@@ -47,22 +47,26 @@ html.canvalier-dark-mode .ic-DashboardCard {
 }
 
 html.canvalier-dark-mode .ic-DashboardCard__link {
-  background-color: #373737 !important;
+  background-color: transparent !important;
 }
 
 html.canvalier-dark-mode .ic-DashboardCard__header {
-  background-color: #373737 !important;
+  background-color: transparent !important;
 }
 
 html.canvalier-dark-mode .ic-DashboardCard__header_content {
-  background-color: #373737 !important;
+  background-color: transparent !important;
 }
 
-/* Course card title - keep original dark overlay */
+/* Course card title - match surrounding grey */
 html.canvalier-dark-mode .ic-DashboardCard__header-title {
   color: #ffffff !important;
-  background-color: rgba(0, 0, 0, 0.7) !important;
+  background-color: #373737 !important;
   padding: 8px !important;
+}
+
+html.canvalier-dark-mode .ic-DashboardCard__header-title.ellipsis {
+  background-color: #373737 !important;
 }
 
 html.canvalier-dark-mode .ic-DashboardCard__header-subtitle,
