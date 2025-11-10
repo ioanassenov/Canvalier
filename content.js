@@ -539,7 +539,10 @@ function waitForDashboard() {
           resolve();
         }
       });
-      observer.observe(document.body, {
+
+      // At document_start, body might not exist yet, so use documentElement
+      const targetNode = document.body || document.documentElement;
+      observer.observe(targetNode, {
         childList: true,
         subtree: true
       });
@@ -547,7 +550,7 @@ function waitForDashboard() {
       // Timeout after 10 seconds
       setTimeout(() => {
         console.warn('⚠️ Timeout waiting for course cards - they may not exist on this page');
-        obs.disconnect();
+        observer.disconnect();
         resolve();
       }, 10000);
     }
