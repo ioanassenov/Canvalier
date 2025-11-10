@@ -352,17 +352,6 @@ html.canvalier-dark-mode .Button:not([class*="ColorPicker"]):not([class*="color-
   background-color: #5a5a5a !important;
 }
 
-/* Exclude color swatches from dark mode */
-html.canvalier-dark-mode button[class*="ColorPicker"],
-html.canvalier-dark-mode button[class*="color-picker"],
-html.canvalier-dark-mode button[class*="ColorButton"],
-html.canvalier-dark-mode .ColorPicker__Container button,
-html.canvalier-dark-mode [class*="ColorPicker"] button {
-  background-color: var(--color, inherit) !important;
-  color: inherit !important;
-  border-color: #888888 !important;
-}
-
 /* Tables */
 html.canvalier-dark-mode table,
 html.canvalier-dark-mode .table,
