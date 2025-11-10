@@ -796,29 +796,13 @@ function setupPersistenceObserver() {
   }, 2000);
 }
 
-// Apply dark mode by adding class to html element
-// The CSS is loaded from dark-mode.css via manifest.json
+// Dark mode functions (delegate to module)
 function applyDarkMode() {
-  log('🌙', 'Applying dark mode...');
-  document.documentElement.classList.add('canvalier-dark-mode');
-
-  // Update all title colors to use brighter versions
-  const cards = document.querySelectorAll('.ic-DashboardCard');
-  cards.forEach(card => applyTitleColorFromOverlay(card));
-
-  log('✅', 'Dark mode applied');
+  darkMode.applyDarkMode();
 }
 
-// Remove dark mode by removing class from html element
 function removeDarkMode() {
-  log('☀️', 'Removing dark mode...');
-  document.documentElement.classList.remove('canvalier-dark-mode');
-
-  // Update all title colors back to normal overlay colors
-  const cards = document.querySelectorAll('.ic-DashboardCard');
-  cards.forEach(card => applyTitleColorFromOverlay(card));
-
-  log('✅', 'Dark mode removed');
+  darkMode.removeDarkMode();
 }
 
 // Disable all Canvalier effects (restore Canvas to normal state)
@@ -1016,6 +1000,13 @@ async function init() {
       applyCustomImages
     });
     log('✅', 'Assignment manager module initialized');
+
+    // darkMode is already loaded (from modules/dark-mode.js in manifest)
+    darkMode.init({
+      log,
+      applyTitleColorFromOverlay
+    });
+    log('✅', 'Dark mode module initialized');
 
     // Apply dark mode globally (works on all Canvas pages, not just dashboard)
     if (extensionSettings.darkMode) {

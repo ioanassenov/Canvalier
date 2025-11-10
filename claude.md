@@ -42,6 +42,7 @@ Canvalier is a Chrome extension that enhances the Canvas LMS dashboard experienc
   - **options-panel.js**: Options box creation and management (~390 lines)
   - **custom-images.js**: Custom image functionality and color utilities (~754 lines)
   - **assignment-manager.js**: Assignment fetching, filtering, display, and mark-as-done tracking (~650 lines)
+  - **dark-mode.js**: Dark mode application and removal (~40 lines)
 - **styles.css**: Styling for assignment summaries and options UI
 - **dark-mode.css**: Dark mode styling
 - **icons/**: Extension icons (16px, 48px, 128px)
@@ -59,6 +60,7 @@ The extension uses a **static module loading pattern** that complies with Manife
     "modules/options-panel.js",
     "modules/custom-images.js",
     "modules/assignment-manager.js",
+    "modules/dark-mode.js",
     "content.js"
   ],
   ...
@@ -162,6 +164,11 @@ newModule.publicMethod();
 - Assignment fetching, filtering, display, and mark-as-done tracking
 - Functions: `toggleMarkedDone()`, `isMarkedDone()`, `cleanupMarkedDone()`, `fetchAssignments()`, `getUpcomingAssignments()`, `getTimeRemaining()`, `formatDueDate()`, `createSummaryElement()`, `insertLoadingPlaceholders()`, `addSummaryToCard()`, `prefetchAllAssignments()`, `processCourseCards()`
 - Dependencies: extensionSettings, saveSetting, log, getCourseId, assignmentCache, pendingFetches, CACHE_VERSION, applyCustomImages
+
+**dark-mode.js** (~40 lines)
+- Dark mode application and removal
+- Functions: `applyDarkMode()`, `removeDarkMode()`
+- Dependencies: log, applyTitleColorFromOverlay
 
 #### Module Loading Benefits
 
