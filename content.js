@@ -538,22 +538,20 @@ function waitForDashboard() {
 }
 
 // Wait for Canvas to finish re-rendering (DOM stabilization)
+// Uses frame-based polling instead of setTimeout for precise timing
 function waitForDOMStable() {
   return new Promise((resolve) => {
     console.log('⏳ Waiting for Canvas DOM to stabilize...');
-    let debounceTimer;
-    let mutationCount = 0;
+    let framesSinceLastMutation = 0;
+    const STABLE_FRAME_COUNT = 10; // Wait for 10 consecutive frames (~167ms at 60fps) of no changes
+    let mutationDetected = false;
+    let totalFrames = 0;
+    const MAX_FRAMES = 180; // Maximum 3 seconds at 60fps
 
     const observer = new MutationObserver((mutations) => {
-      mutationCount++;
-      clearTimeout(debounceTimer);
-
-      // Wait for 300ms of no DOM changes
-      debounceTimer = setTimeout(() => {
-        console.log(`✅ DOM stable after ${mutationCount} mutations`);
-        observer.disconnect();
-        resolve();
-      }, 300);
+      // Reset frame counter when we detect a mutation
+      framesSinceLastMutation = 0;
+      mutationDetected = true;
     });
 
     // Watch the dashboard for changes
@@ -566,21 +564,44 @@ function waitForDOMStable() {
       });
     }
 
-    // Fallback timeout - if no mutations happen, resolve after 500ms
-    setTimeout(() => {
-      if (mutationCount === 0) {
-        console.log('✅ No mutations detected, proceeding');
+    // Use requestAnimationFrame to count stable frames (frame-by-frame polling)
+    const checkStability = () => {
+      totalFrames++;
+
+      if (mutationDetected) {
+        framesSinceLastMutation++;
+
+        // Check if we've had enough stable frames
+        if (framesSinceLastMutation >= STABLE_FRAME_COUNT) {
+          console.log(`✅ DOM stable after ${framesSinceLastMutation} consecutive frames without mutations (total ${totalFrames} frames elapsed)`);
+          observer.disconnect();
+          resolve();
+          return;
+        }
+      }
+
+      // Check if we've exceeded max wait time
+      if (totalFrames >= MAX_FRAMES) {
+        console.log(`⚠️ Max wait time reached after ${totalFrames} frames, proceeding anyway`);
         observer.disconnect();
         resolve();
+        return;
       }
-    }, 500);
 
-    // Maximum wait time - 3 seconds
-    setTimeout(() => {
-      console.log(`⚠️ Max wait time reached after ${mutationCount} mutations`);
-      observer.disconnect();
-      resolve();
-    }, 3000);
+      // If no mutation detected within first 60 frames (~1s), assume stable
+      if (totalFrames >= 60 && !mutationDetected) {
+        console.log(`✅ No mutations detected within ${totalFrames} frames, assuming stable`);
+        observer.disconnect();
+        resolve();
+        return;
+      }
+
+      // Continue checking next frame
+      requestAnimationFrame(checkStability);
+    };
+
+    // Start the frame-based stability check
+    requestAnimationFrame(checkStability);
   });
 }
 
@@ -2274,6 +2295,10 @@ async function init() {
       loadSettings(),      // Required: other code reads extensionSettings
       waitForDashboard()   // Required: need course cards to exist
     ]);
+
+    // Wait for Canvas to finish its initial re-render before inserting anything
+    // This prevents the flash where Canvas removes our elements
+    await waitForDOMStable();
 
     // ALWAYS insert options box (so users can toggle Canvalier on/off)
     insertOptionsBox();
