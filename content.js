@@ -232,26 +232,32 @@ async function loadModule(moduleName) {
     return modules[moduleName]; // Already loaded, return cached version
   }
 
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
+  try {
     const moduleUrl = browserAPI.runtime.getURL(`modules/${moduleName}.js`);
-    script.src = moduleUrl;
-    script.onload = () => {
-      // Module should have exported itself to window
-      const moduleMap = {
-        'options-panel': window.CanvalierOptionsPanel
-      };
-      modules[moduleName] = moduleMap[moduleName];
-      if (modules[moduleName]) {
-        console.log(`✅ Module loaded: ${moduleName}`);
-        resolve(modules[moduleName]);
-      } else {
-        reject(new Error(`Module ${moduleName} did not export correctly`));
-      }
+    const response = await fetch(moduleUrl);
+    const moduleCode = await response.text();
+
+    // Execute the module code in the content script context (not page context)
+    // Using eval here is safe because we're loading our own extension code
+    eval(moduleCode);
+
+    // Module should have exported itself to window
+    const moduleMap = {
+      'options-panel': window.CanvalierOptionsPanel
     };
-    script.onerror = () => reject(new Error(`Failed to load module: ${moduleName}`));
-    document.head.appendChild(script);
-  });
+
+    modules[moduleName] = moduleMap[moduleName];
+
+    if (modules[moduleName]) {
+      console.log(`✅ Module loaded: ${moduleName}`);
+      return modules[moduleName];
+    } else {
+      throw new Error(`Module ${moduleName} did not export correctly`);
+    }
+  } catch (error) {
+    console.error(`❌ Error loading module ${moduleName}:`, error);
+    throw error;
+  }
 }
 
 // Extension settings
