@@ -717,16 +717,17 @@ function applyTitleColorFromOverlay(card) {
   // Check if dark mode is enabled
   const isDarkMode = document.documentElement.classList.contains('canvalier-dark-mode');
 
-  if (isDarkMode) {
-    // In dark mode, use a brighter version of the overlay color
-    const brightColor = brightenColor(overlayColor);
-    // Use setProperty with 'important' to override dark-mode.css link color rule
-    title.style.setProperty('color', brightColor, 'important');
-  } else {
-    // In light mode, use the exact overlay color
-    // Use setProperty with 'important' to ensure it takes precedence
-    title.style.setProperty('color', overlayColor, 'important');
-  }
+  const colorToApply = isDarkMode ? brightenColor(overlayColor) : overlayColor;
+
+  // Apply to the title element itself
+  title.style.setProperty('color', colorToApply, 'important');
+
+  // ALSO apply to all child elements (spans, divs, etc.) inside the title
+  // This is necessary because the #content selector catches child elements
+  const childElements = title.querySelectorAll('*');
+  childElements.forEach(child => {
+    child.style.setProperty('color', colorToApply, 'important');
+  });
 }
 
 // Fetch assignments for a course

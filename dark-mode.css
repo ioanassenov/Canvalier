@@ -64,6 +64,15 @@ html.canvalier-dark-mode .ic-DashboardCard__header-title {
   /* Color is now dynamically set via JavaScript to match overlay color */
 }
 
+/* Ensure course card title and all its children can have dynamic colors (override general content rules) */
+html.canvalier-dark-mode .ic-DashboardCard__header-title,
+html.canvalier-dark-mode .ic-DashboardCard__header-title *,
+html.canvalier-dark-mode .ic-DashboardCard__header-title span,
+html.canvalier-dark-mode .ic-DashboardCard__header-title div {
+  /* Don't override color - let JavaScript set it dynamically */
+  /* This rule has higher specificity than the general content color rules */
+}
+
 html.canvalier-dark-mode .ic-DashboardCard__header-title.ellipsis {
   background-color: #373737 !important;
 }
@@ -245,6 +254,15 @@ html.canvalier-dark-mode #content span,
 html.canvalier-dark-mode #content li,
 html.canvalier-dark-mode .user_content {
   color: #c3c3c3 !important;
+}
+
+/* OVERRIDE: Course card titles should NOT use the general content color - JS sets dynamic colors */
+/* This rule must come AFTER the content rule above and have equal/higher specificity */
+html.canvalier-dark-mode #dashboard .ic-DashboardCard__header-title,
+html.canvalier-dark-mode #dashboard .ic-DashboardCard__header-title *,
+html.canvalier-dark-mode .ic-DashboardCard .ic-DashboardCard__header-title,
+html.canvalier-dark-mode .ic-DashboardCard .ic-DashboardCard__header-title * {
+  color: unset !important;
 }
 
 /* Links */
