@@ -208,13 +208,24 @@
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
-  z-index: -1; /* Push behind everything using negative z-index */
+  z-index: 0; /* Lowest layer in the stacking context */
   border-radius: 4px 4px 0 0; /* Match card's top rounded corners */
   pointer-events: none; /* Don't interfere with clicks */
 }
 
-/* Don't set position or z-index on other elements - let Canvas handle its own layout */
-/* The negative z-index on the custom image ensures it stays behind everything */
+/* Layer the hero overlay above the custom image */
+.ic-DashboardCard__header_hero {
+  position: relative;
+  z-index: 1;
+}
+
+/* Layer the course link/title above the hero */
+.ic-DashboardCard__link {
+  position: relative;
+  z-index: 2;
+}
+
+/* IMPORTANT: Don't touch the button container - it has complex Canvas positioning logic */
 
 /* Options Box Styles */
 .canvas-options-box {
