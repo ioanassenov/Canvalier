@@ -720,10 +720,12 @@ function applyTitleColorFromOverlay(card) {
   if (isDarkMode) {
     // In dark mode, use a brighter version of the overlay color
     const brightColor = brightenColor(overlayColor);
-    title.style.color = brightColor;
+    // Use setProperty with 'important' to override dark-mode.css link color rule
+    title.style.setProperty('color', brightColor, 'important');
   } else {
     // In light mode, use the exact overlay color
-    title.style.color = overlayColor;
+    // Use setProperty with 'important' to ensure it takes precedence
+    title.style.setProperty('color', overlayColor, 'important');
   }
 }
 
