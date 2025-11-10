@@ -425,3 +425,57 @@ html.canvalier-dark-mode .canvas-range-slider::-moz-range-thumb {
 html.canvalier-dark-mode .canvas-range-slider::-moz-range-track {
   background: #555555 !important;
 }
+
+/* Hamburger menu popover - dark background */
+html.canvalier-dark-mode [class*="contextView"],
+html.canvalier-dark-mode [data-position-content*="Popover"] {
+  background-color: #373737 !important;
+}
+
+html.canvalier-dark-mode [class*="contextView__content"],
+html.canvalier-dark-mode [class*="panel__content"] {
+  background-color: #373737 !important;
+}
+
+/* Popover panels and tabs */
+html.canvalier-dark-mode [class*="tabs__panelsContainer"],
+html.canvalier-dark-mode [role="tabpanel"] {
+  background-color: #373737 !important;
+}
+
+/* Tab buttons in hamburger menu */
+html.canvalier-dark-mode [role="tab"] {
+  color: #c3c3c3 !important;
+  border-color: #555555 !important;
+}
+
+html.canvalier-dark-mode [role="tab"][aria-selected="true"] {
+  color: #ffffff !important;
+  border-bottom-color: #7ba3d1 !important;
+}
+
+/* Color picker container in hamburger menu */
+html.canvalier-dark-mode .DashboardCardMenu__ColorPicker,
+html.canvalier-dark-mode .ColorPicker__Container {
+  background-color: #373737 !important;
+}
+
+/* Labels in hamburger menu */
+html.canvalier-dark-mode [class*="formFieldLayout__label"] {
+  color: #c3c3c3 !important;
+}
+
+/* Close button in popover */
+html.canvalier-dark-mode [class*="closeButton"] button {
+  background-color: transparent !important;
+  color: #c3c3c3 !important;
+}
+
+html.canvalier-dark-mode [class*="closeButton"] button:hover {
+  background-color: #4a4a4a !important;
+}
+
+/* Canvalier enhancements border in dark mode */
+html.canvalier-dark-mode .canvalier-color-enhancements {
+  border-top-color: #555555 !important;
+}

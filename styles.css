@@ -458,6 +458,9 @@
 /* Style the canvalier enhancements to match Canvas's design */
 .canvalier-color-enhancements {
   animation: fadeIn 0.3s ease-in;
+  padding-top: 16px;
+  margin-top: 16px;
+  border-top: 1px solid #c7cdd1;
 }
 
 @keyframes fadeIn {
