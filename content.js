@@ -538,20 +538,22 @@ function waitForDashboard() {
 }
 
 // Wait for Canvas to finish re-rendering (DOM stabilization)
-// Uses frame-based polling instead of setTimeout for precise timing
 function waitForDOMStable() {
   return new Promise((resolve) => {
     console.log('⏳ Waiting for Canvas DOM to stabilize...');
-    let framesSinceLastMutation = 0;
-    const STABLE_FRAME_COUNT = 10; // Wait for 10 consecutive frames (~167ms at 60fps) of no changes
-    let mutationDetected = false;
-    let totalFrames = 0;
-    const MAX_FRAMES = 180; // Maximum 3 seconds at 60fps
+    let debounceTimer;
+    let mutationCount = 0;
 
     const observer = new MutationObserver((mutations) => {
-      // Reset frame counter when we detect a mutation
-      framesSinceLastMutation = 0;
-      mutationDetected = true;
+      mutationCount++;
+      clearTimeout(debounceTimer);
+
+      // Wait for 300ms of no DOM changes
+      debounceTimer = setTimeout(() => {
+        console.log(`✅ DOM stable after ${mutationCount} mutations`);
+        observer.disconnect();
+        resolve();
+      }, 300);
     });
 
     // Watch the dashboard for changes
@@ -564,44 +566,21 @@ function waitForDOMStable() {
       });
     }
 
-    // Use requestAnimationFrame to count stable frames (frame-by-frame polling)
-    const checkStability = () => {
-      totalFrames++;
-
-      if (mutationDetected) {
-        framesSinceLastMutation++;
-
-        // Check if we've had enough stable frames
-        if (framesSinceLastMutation >= STABLE_FRAME_COUNT) {
-          console.log(`✅ DOM stable after ${framesSinceLastMutation} consecutive frames without mutations (total ${totalFrames} frames elapsed)`);
-          observer.disconnect();
-          resolve();
-          return;
-        }
-      }
-
-      // Check if we've exceeded max wait time
-      if (totalFrames >= MAX_FRAMES) {
-        console.log(`⚠️ Max wait time reached after ${totalFrames} frames, proceeding anyway`);
+    // Fallback timeout - if no mutations happen, resolve after 500ms
+    setTimeout(() => {
+      if (mutationCount === 0) {
+        console.log('✅ No mutations detected, proceeding');
         observer.disconnect();
         resolve();
-        return;
       }
+    }, 500);
 
-      // If no mutation detected within first 60 frames (~1s), assume stable
-      if (totalFrames >= 60 && !mutationDetected) {
-        console.log(`✅ No mutations detected within ${totalFrames} frames, assuming stable`);
-        observer.disconnect();
-        resolve();
-        return;
-      }
-
-      // Continue checking next frame
-      requestAnimationFrame(checkStability);
-    };
-
-    // Start the frame-based stability check
-    requestAnimationFrame(checkStability);
+    // Maximum wait time - 3 seconds
+    setTimeout(() => {
+      console.log(`⚠️ Max wait time reached after ${mutationCount} mutations`);
+      observer.disconnect();
+      resolve();
+    }, 3000);
   });
 }
 
@@ -1156,8 +1135,6 @@ function applyCustomImages() {
   const cards = document.querySelectorAll('.ic-DashboardCard');
   let changedCount = 0;
 
-  console.log(`🖼️ [IMAGE DEBUG] applyCustomImages() called at ${Date.now() - performance.timing.navigationStart}ms after page load`);
-
   cards.forEach(card => {
     const courseId = getCourseId(card);
     if (!courseId) return;
@@ -1174,14 +1151,11 @@ function applyCustomImages() {
 
       // Get or create the image div
       let imageDiv = header.querySelector('.canvalier-custom-image');
-      const wasCreated = !imageDiv;
-
       if (!imageDiv) {
         imageDiv = document.createElement('div');
         imageDiv.className = 'canvalier-custom-image';
         // Insert as first child so it appears behind everything
         header.insertBefore(imageDiv, header.firstChild);
-        console.log(`🆕 [IMAGE DEBUG] Created new custom image div for course ${courseId}`);
       }
 
       // Get the hero overlay element to adjust its opacity
@@ -1195,23 +1169,18 @@ function applyCustomImages() {
         // Also save original background color for reset functionality
         const originalColor = window.getComputedStyle(hero).backgroundColor;
         hero.setAttribute('data-canvalier-original-color', originalColor);
-        console.log(`💾 [IMAGE DEBUG] Saved original opacity (${originalOpacity}) and color for course ${courseId}`);
       }
 
       // Reapply if image changed OR if opacity changed
       const currentOpacity = header.getAttribute('data-canvalier-current-opacity');
       const opacityChanged = currentOpacity !== String(opacity);
-      if (currentlyApplied !== customImageUrl || opacityChanged || wasCreated) {
+      if (currentlyApplied !== customImageUrl || opacityChanged) {
         // Set the background image on our custom image div
         imageDiv.style.backgroundImage = `url('${customImageUrl}')`;
 
         // Adjust the hero overlay opacity based on per-course setting
         if (hero) {
-          const oldOpacity = hero.style.opacity;
           hero.style.opacity = String(opacity);
-          if (oldOpacity && oldOpacity !== String(opacity)) {
-            console.log(`🎨 [IMAGE DEBUG] Changed hero opacity from ${oldOpacity} to ${opacity} for course ${courseId}`);
-          }
         }
 
         header.setAttribute('data-canvalier-image-applied', customImageUrl);
@@ -2053,9 +2022,12 @@ function setupPersistenceObserver() {
         log('♻️', `Re-inserted ${reinserted} ${isInitialLoading ? 'loading placeholders' : 'summaries'}`);
       }
 
-      // Don't call applyCustomImages() here - it creates feedback loops
-      // The IIFE handles image application during initial load
-      // The 2-second polling interval handles it after initial load
+      // Reapply custom images, but throttle to max once per 300ms to prevent flashing
+      const now = Date.now();
+      if (now - lastImageApplyTime > 300) {
+        applyCustomImages();
+        lastImageApplyTime = now;
+      }
     }, debounceTime);
   });
 
@@ -2303,18 +2275,6 @@ async function init() {
       waitForDashboard()   // Required: need course cards to exist
     ]);
 
-    // Start fetching assignments IMMEDIATELY in parallel (don't await)
-    // This happens while we wait for DOM stability, maximizing parallelism
-    if (extensionSettings.canvalierEnabled) {
-      prefetchAllAssignments();      // Starts async, doesn't block
-      cleanupMarkedDone();           // Starts async, doesn't block
-    }
-
-    // Wait for Canvas to finish its initial re-render before inserting anything
-    // This prevents the flash where Canvas removes our elements
-    // Assignment fetches are happening in parallel during this wait
-    await waitForDOMStable();
-
     // ALWAYS insert options box (so users can toggle Canvalier on/off)
     insertOptionsBox();
 
@@ -2332,8 +2292,9 @@ async function init() {
       // Note: applyCustomImages() is handled by the immediate IIFE at the top
       // and will be called again by processCourseCards() after loading
 
-      // Kick off remaining background work in parallel - don't await any of it
-      // (prefetchAllAssignments and cleanupMarkedDone already started above)
+      // Kick off ALL background work in parallel - don't await any of it
+      cleanupMarkedDone();           // Runs async, doesn't block
+      prefetchAllAssignments();      // Runs async, doesn't block
       processCourseCards();          // Runs async, shows loading then fills in data
       setupPersistenceObserver();    // Runs sync, non-blocking
       setupCustomImageTabObserver(); // Runs sync, watches for hamburger menus
