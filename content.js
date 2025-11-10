@@ -1156,6 +1156,8 @@ function applyCustomImages() {
   const cards = document.querySelectorAll('.ic-DashboardCard');
   let changedCount = 0;
 
+  console.log(`🖼️ [IMAGE DEBUG] applyCustomImages() called at ${Date.now() - performance.timing.navigationStart}ms after page load`);
+
   cards.forEach(card => {
     const courseId = getCourseId(card);
     if (!courseId) return;
@@ -1172,11 +1174,14 @@ function applyCustomImages() {
 
       // Get or create the image div
       let imageDiv = header.querySelector('.canvalier-custom-image');
+      const wasCreated = !imageDiv;
+
       if (!imageDiv) {
         imageDiv = document.createElement('div');
         imageDiv.className = 'canvalier-custom-image';
         // Insert as first child so it appears behind everything
         header.insertBefore(imageDiv, header.firstChild);
+        console.log(`🆕 [IMAGE DEBUG] Created new custom image div for course ${courseId}`);
       }
 
       // Get the hero overlay element to adjust its opacity
@@ -1190,18 +1195,23 @@ function applyCustomImages() {
         // Also save original background color for reset functionality
         const originalColor = window.getComputedStyle(hero).backgroundColor;
         hero.setAttribute('data-canvalier-original-color', originalColor);
+        console.log(`💾 [IMAGE DEBUG] Saved original opacity (${originalOpacity}) and color for course ${courseId}`);
       }
 
       // Reapply if image changed OR if opacity changed
       const currentOpacity = header.getAttribute('data-canvalier-current-opacity');
       const opacityChanged = currentOpacity !== String(opacity);
-      if (currentlyApplied !== customImageUrl || opacityChanged) {
+      if (currentlyApplied !== customImageUrl || opacityChanged || wasCreated) {
         // Set the background image on our custom image div
         imageDiv.style.backgroundImage = `url('${customImageUrl}')`;
 
         // Adjust the hero overlay opacity based on per-course setting
         if (hero) {
+          const oldOpacity = hero.style.opacity;
           hero.style.opacity = String(opacity);
+          if (oldOpacity && oldOpacity !== String(opacity)) {
+            console.log(`🎨 [IMAGE DEBUG] Changed hero opacity from ${oldOpacity} to ${opacity} for course ${courseId}`);
+          }
         }
 
         header.setAttribute('data-canvalier-image-applied', customImageUrl);
