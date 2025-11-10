@@ -58,10 +58,10 @@ html.canvalier-dark-mode .ic-DashboardCard__header_content {
   background-color: transparent !important;
 }
 
-/* Course card title - match surrounding grey */
+/* Course card title - background matches surrounding grey, color is dynamically set by JS */
 html.canvalier-dark-mode .ic-DashboardCard__header-title {
-  color: #ffffff !important;
   background-color: #373737 !important;
+  /* Color is now dynamically set via JavaScript to match overlay color */
 }
 
 html.canvalier-dark-mode .ic-DashboardCard__header-title.ellipsis {
