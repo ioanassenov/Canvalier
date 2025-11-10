@@ -91,7 +91,7 @@ const browserAPI = (() => {
 // IMMEDIATELY apply custom images ASAP (before main init)
 // This prevents flashing of default images
 (async function() {
-  const result = await browserAPI.storage.local.get(['canvalierEnabled', 'customImages', 'imageOpacity']);
+  const result = await browserAPI.storage.local.get(['canvalierEnabled', 'customImages', 'imageOpacityPerCourse', 'imageOpacity']);
   // Only apply if Canvalier is enabled (or undefined, meaning first run)
   if ((result.canvalierEnabled === undefined || result.canvalierEnabled === true) && result.customImages && Object.keys(result.customImages).length > 0) {
       console.log('🚀 Starting immediate custom image application...');
@@ -99,8 +99,7 @@ const browserAPI = (() => {
       const applyImages = () => {
         const cards = document.querySelectorAll('.ic-DashboardCard');
         let appliedCount = 0;
-        // Get opacity setting (default 70 = 0.7 alpha)
-        const opacity = (result.imageOpacity !== undefined ? result.imageOpacity : 70) / 100;
+        const imageOpacityPerCourse = result.imageOpacityPerCourse || {};
 
         cards.forEach(card => {
           const courseLink = card.querySelector('a[href*="/courses/"]');
@@ -115,6 +114,10 @@ const browserAPI = (() => {
 
           const customImageUrl = result.customImages[courseId];
           if (customImageUrl) {
+            // Get opacity for THIS specific course (not global)
+            const courseOpacity = imageOpacityPerCourse[courseId] !== undefined ? imageOpacityPerCourse[courseId] : 70;
+            const opacity = courseOpacity / 100;
+
             // Get or create the image element
             let imageDiv = header.querySelector('.canvalier-custom-image');
             if (!imageDiv) {
@@ -140,7 +143,7 @@ const browserAPI = (() => {
             // Set the background image on our custom image div
             imageDiv.style.backgroundImage = `url('${customImageUrl}')`;
 
-            // Adjust the hero overlay opacity based on user setting
+            // Adjust the hero overlay opacity based on per-course setting
             if (hero) {
               hero.style.opacity = String(opacity);
             }
@@ -215,13 +218,14 @@ const extensionSettings = {
   hideRecentFeedback: false, // Default to showing Recent Feedback column
   hideComingUp: false, // Default to showing Coming Up section
   customImages: {}, // Store custom image URLs per course: { "courseId": "imageUrl" }
-  imageOpacity: 70, // Default opacity for color overlay on custom images (0-100, where 100 = 1.0)
+  imageOpacity: 70, // DEPRECATED - kept for migration, use imageOpacityPerCourse instead
+  imageOpacityPerCourse: {}, // Store opacity per course: { "courseId": opacity (0-100) }
   markedDone: {} // Store marked-done assignments: { "courseId_assignmentId": { markedAt, dueDate } }
 };
 
 // Load settings from browser storage
 async function loadSettings() {
-  const result = await browserAPI.storage.local.get(['canvalierEnabled', 'use24HourFormat', 'showOverdue', 'showTimeRemaining', 'assignmentRangeWeeks', 'minimizedCardCount', 'hideCanvasToDo', 'hideDashboardHeader', 'hideRecentFeedback', 'hideComingUp', 'customImages', 'markedDone']);
+  const result = await browserAPI.storage.local.get(['canvalierEnabled', 'use24HourFormat', 'showOverdue', 'showTimeRemaining', 'assignmentRangeWeeks', 'minimizedCardCount', 'hideCanvasToDo', 'hideDashboardHeader', 'hideRecentFeedback', 'hideComingUp', 'customImages', 'imageOpacityPerCourse', 'markedDone']);
 
   if (result.canvalierEnabled !== undefined) {
     extensionSettings.canvalierEnabled = result.canvalierEnabled;
@@ -258,6 +262,13 @@ async function loadSettings() {
     console.log('📥 [CUSTOM-IMAGES DEBUG] Loaded custom images from storage:', {
       count: Object.keys(result.customImages).length,
       images: result.customImages
+    });
+  }
+  if (result.imageOpacityPerCourse !== undefined) {
+    extensionSettings.imageOpacityPerCourse = result.imageOpacityPerCourse;
+    console.log('📥 [OPACITY DEBUG] Loaded per-course opacities from storage:', {
+      count: Object.keys(result.imageOpacityPerCourse).length,
+      opacities: result.imageOpacityPerCourse
     });
   }
   if (result.markedDone !== undefined) {
@@ -304,6 +315,16 @@ async function saveSetting(key, value) {
   } catch (error) {
     console.error('❌ [SAVE DEBUG] Error saving to storage:', error);
   }
+}
+
+// Get opacity for a specific course (with fallback to default 70)
+function getOpacityForCourse(courseId) {
+  // Check if course has custom opacity set
+  if (extensionSettings.imageOpacityPerCourse[courseId] !== undefined) {
+    return extensionSettings.imageOpacityPerCourse[courseId];
+  }
+  // Fallback to default
+  return 70;
 }
 
 // Toggle marked-done status for an assignment
@@ -1113,8 +1134,6 @@ function applyDashboardHeaderVisibility() {
 function applyCustomImages() {
   const cards = document.querySelectorAll('.ic-DashboardCard');
   let changedCount = 0;
-  // Get opacity setting (default 70 = 0.7 alpha)
-  const opacity = extensionSettings.imageOpacity / 100;
 
   cards.forEach(card => {
     const courseId = getCourseId(card);
@@ -1127,6 +1146,9 @@ function applyCustomImages() {
     const currentlyApplied = header.getAttribute('data-canvalier-image-applied');
 
     if (customImageUrl) {
+      // Get opacity for THIS specific course (not global)
+      const opacity = getOpacityForCourse(courseId) / 100;
+
       // Get or create the image div
       let imageDiv = header.querySelector('.canvalier-custom-image');
       if (!imageDiv) {
@@ -1156,7 +1178,7 @@ function applyCustomImages() {
         // Set the background image on our custom image div
         imageDiv.style.backgroundImage = `url('${customImageUrl}')`;
 
-        // Adjust the hero overlay opacity based on user setting
+        // Adjust the hero overlay opacity based on per-course setting
         if (hero) {
           hero.style.opacity = String(opacity);
         }
@@ -1265,6 +1287,9 @@ function enhanceColorTab(popover, courseId) {
   const colorPanel = panelsContainer.querySelector('[role="tabpanel"]');
   if (!colorPanel) return;
 
+  // Get the opacity for THIS specific course
+  const courseOpacity = getOpacityForCourse(courseId);
+
   // Create enhancement container
   const enhancementContainer = document.createElement('div');
   enhancementContainer.className = 'canvalier-color-enhancements';
@@ -1283,10 +1308,10 @@ function enhanceColorTab(popover, courseId) {
               type="range"
               min="0"
               max="100"
-              value="${extensionSettings.imageOpacity}"
+              value="${courseOpacity}"
               class="canvalier-opacity-slider"
               style="flex: 1;">
-            <span class="canvalier-opacity-value" style="min-width: 45px; text-align: right;">${extensionSettings.imageOpacity}%</span>
+            <span class="canvalier-opacity-value" style="min-width: 45px; text-align: right;">${courseOpacity}%</span>
           </div>
         </span>
       </label>
@@ -1306,17 +1331,18 @@ function enhanceColorTab(popover, courseId) {
     panelContent.appendChild(enhancementContainer);
   }
 
-  // Wire up the opacity slider
+  // Wire up the opacity slider - save per-course
   const opacitySlider = enhancementContainer.querySelector('.canvalier-opacity-slider');
   const opacityValue = enhancementContainer.querySelector('.canvalier-opacity-value');
 
   opacitySlider.addEventListener('input', (e) => {
     const value = e.target.value;
     opacityValue.textContent = `${value}%`;
-    extensionSettings.imageOpacity = parseInt(value);
-    saveSetting('imageOpacity', extensionSettings.imageOpacity);
+    // Save opacity for THIS course specifically
+    extensionSettings.imageOpacityPerCourse[courseId] = parseInt(value);
+    saveSetting('imageOpacityPerCourse', extensionSettings.imageOpacityPerCourse);
     applyCustomImages();
-    log('🎨', `Opacity changed to ${value}%`);
+    log('🎨', `Opacity changed to ${value}% for course ${courseId}`);
   });
 
   // Wire up the Reset Color button
@@ -1441,6 +1467,17 @@ function injectCustomImageTab(popover, courseId) {
               if (!clickedPanel.classList.contains('css-1h24o60-panel')) {
                 clickedPanel.className = 'css-1h24o60-panel';
               }
+            }
+          }
+
+          // If this is the Color tab, ensure enhancements are present
+          const tabText = existingTab.textContent.trim();
+          if (tabText === 'Color') {
+            // Remove the check flag to force re-enhancement
+            const existingEnhancements = popover.querySelector('.canvalier-color-enhancements');
+            if (!existingEnhancements) {
+              console.log('🔧 Color tab clicked but enhancements missing - re-enhancing...');
+              enhanceColorTab(popover, courseId);
             }
           }
         }, 0);
