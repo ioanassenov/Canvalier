@@ -165,11 +165,9 @@ const browserAPI = (() => {
       // Use a more targeted observer that only watches for the dashboard cards container
       // This prevents excessive re-applying
       const dashboardContainer = document.querySelector('#dashboard-planner, #dashboard, #application');
-      let earlyObserver = null;
-
       if (dashboardContainer) {
         let debounceTimer;
-        earlyObserver = new MutationObserver(() => {
+        const observer = new MutationObserver(() => {
           clearTimeout(debounceTimer);
           debounceTimer = setTimeout(() => {
             const cards = document.querySelectorAll('.ic-DashboardCard');
@@ -179,22 +177,16 @@ const browserAPI = (() => {
           }, 200); // Debounce to prevent rapid re-applies
         });
 
-        earlyObserver.observe(dashboardContainer, {
+        observer.observe(dashboardContainer, {
           childList: true,
           subtree: false // Only watch direct children, not deep changes
         });
 
-        console.log('👁️ Early image observer started (will auto-disconnect when main init takes over)');
+        // Stop observing after 3 seconds (main init will take over)
+        setTimeout(() => {
+          observer.disconnect();
+        }, 3000);
       }
-
-      // Expose a way for main init to stop this observer early
-      window.__canvalierStopEarlyObserver = () => {
-        if (earlyObserver) {
-          earlyObserver.disconnect();
-          console.log('🛑 Early image observer stopped (main init took over)');
-          earlyObserver = null;
-        }
-      };
     }
 })();
 
@@ -2315,12 +2307,6 @@ async function init() {
     // This prevents the flash where Canvas removes our elements
     // Assignment fetches are happening in parallel during this wait
     await waitForDOMStable();
-
-    // Stop the early image observer now that main init is taking over
-    // This prevents it from re-applying images when we start inserting summaries
-    if (typeof window.__canvalierStopEarlyObserver === 'function') {
-      window.__canvalierStopEarlyObserver();
-    }
 
     // ALWAYS insert options box (so users can toggle Canvalier on/off)
     insertOptionsBox();
