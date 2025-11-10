@@ -218,47 +218,8 @@ let isInitialLoading = false;
 // Track if options box observer has been set up (wrapped in object for module access)
 const optionsBoxObserverSetup = { value: false };
 
-// Module storage - loaded modules are cached here
-const modules = {
-  optionsPanel: null
-};
-
-// Global references to modules (for cleaner access without "modules." prefix)
-let optionsPanel = null;
-
-// Load a module dynamically (load once, use multiple times)
-async function loadModule(moduleName) {
-  if (modules[moduleName]) {
-    return modules[moduleName]; // Already loaded, return cached version
-  }
-
-  try {
-    const moduleUrl = browserAPI.runtime.getURL(`modules/${moduleName}.js`);
-    const response = await fetch(moduleUrl);
-    const moduleCode = await response.text();
-
-    // Execute the module code in the content script context (not page context)
-    // Using eval here is safe because we're loading our own extension code
-    eval(moduleCode);
-
-    // Module should have exported itself to window
-    const moduleMap = {
-      'options-panel': window.CanvalierOptionsPanel
-    };
-
-    modules[moduleName] = moduleMap[moduleName];
-
-    if (modules[moduleName]) {
-      console.log(`✅ Module loaded: ${moduleName}`);
-      return modules[moduleName];
-    } else {
-      throw new Error(`Module ${moduleName} did not export correctly`);
-    }
-  } catch (error) {
-    console.error(`❌ Error loading module ${moduleName}:`, error);
-    throw error;
-  }
-}
+// Note: optionsPanel is already loaded from modules/options-panel.js
+// (declared first in manifest.json, executes before this file)
 
 // Extension settings
 const extensionSettings = {
@@ -2146,35 +2107,26 @@ async function init() {
     // Load settings first (needed for both dark mode and dashboard features)
     await loadSettings();
 
-    // Load and initialize modules (load once, use multiple times)
-    if (!modules.optionsPanel) {
-      try {
-        modules.optionsPanel = await loadModule('options-panel');
-        // Initialize module with dependencies
-        modules.optionsPanel.init({
-          extensionSettings,
-          browserAPI,
-          saveSetting,
-          log,
-          enableCanvalierEffects,
-          disableCanvalierEffects,
-          applyDarkMode,
-          removeDarkMode,
-          applyCanvasToDoVisibility,
-          applyRecentFeedbackVisibility,
-          applyComingUpVisibility,
-          applyDashboardHeaderVisibility,
-          applyCustomImages,
-          addSummaryToCard,
-          optionsBoxObserverSetup
-        });
-        // Create global reference for cleaner access
-        optionsPanel = modules.optionsPanel;
-        log('✅', 'Options panel module initialized');
-      } catch (error) {
-        console.error('❌ Failed to load options panel module:', error);
-      }
-    }
+    // Initialize modules with dependencies
+    // optionsPanel is already loaded (from modules/options-panel.js in manifest)
+    optionsPanel.init({
+      extensionSettings,
+      browserAPI,
+      saveSetting,
+      log,
+      enableCanvalierEffects,
+      disableCanvalierEffects,
+      applyDarkMode,
+      removeDarkMode,
+      applyCanvasToDoVisibility,
+      applyRecentFeedbackVisibility,
+      applyComingUpVisibility,
+      applyDashboardHeaderVisibility,
+      applyCustomImages,
+      addSummaryToCard,
+      optionsBoxObserverSetup
+    });
+    log('✅', 'Options panel module initialized');
 
     // Apply dark mode globally (works on all Canvas pages, not just dashboard)
     if (extensionSettings.darkMode) {
