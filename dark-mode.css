@@ -62,7 +62,6 @@ html.canvalier-dark-mode .ic-DashboardCard__header_content {
 html.canvalier-dark-mode .ic-DashboardCard__header-title {
   color: #ffffff !important;
   background-color: #373737 !important;
-  padding: 8px !important;
 }
 
 html.canvalier-dark-mode .ic-DashboardCard__header-title.ellipsis {
