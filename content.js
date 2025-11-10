@@ -2053,12 +2053,9 @@ function setupPersistenceObserver() {
         log('♻️', `Re-inserted ${reinserted} ${isInitialLoading ? 'loading placeholders' : 'summaries'}`);
       }
 
-      // Reapply custom images, but throttle to max once per 300ms to prevent flashing
-      const now = Date.now();
-      if (now - lastImageApplyTime > 300) {
-        applyCustomImages();
-        lastImageApplyTime = now;
-      }
+      // Don't call applyCustomImages() here - it creates feedback loops
+      // The IIFE handles image application during initial load
+      // The 2-second polling interval handles it after initial load
     }, debounceTime);
   });
 
