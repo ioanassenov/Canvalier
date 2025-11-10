@@ -127,6 +127,26 @@ html.canvalier-dark-mode .event-list-item {
   border-color: #555555 !important;
 }
 
+/* Todo list item details (points, due dates) - ensure readable text color */
+html.canvalier-dark-mode .ToDoSidebarItem__Info,
+html.canvalier-dark-mode .ToDoSidebarItem__InformationRow,
+html.canvalier-dark-mode .ToDoSidebarItem__InformationRow li,
+html.canvalier-dark-mode [data-testid="ToDoSidebarItem__InformationRow"],
+html.canvalier-dark-mode [data-testid="ToDoSidebarItem__InformationRow"] li {
+  color: #c3c3c3 !important;
+}
+
+/* Event/feedback details - remove white gradient streak */
+html.canvalier-dark-mode .event-details,
+html.canvalier-dark-mode .event-details__title,
+html.canvalier-dark-mode .event-details__context,
+html.canvalier-dark-mode .recent_feedback_title {
+  background: none !important;
+  background-image: none !important;
+  color: #c3c3c3 !important;
+}
+
+
 /* Canvas options box - dark theme */
 html.canvalier-dark-mode .canvas-options-box {
   background-color: #373737 !important;
