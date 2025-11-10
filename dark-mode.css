@@ -47,15 +47,15 @@ html.canvalier-dark-mode .ic-DashboardCard {
 }
 
 html.canvalier-dark-mode .ic-DashboardCard__link {
-  background-color: transparent !important;
+  background-color: #373737 !important;
 }
 
 html.canvalier-dark-mode .ic-DashboardCard__header {
-  background-color: transparent !important;
+  background-color: #373737 !important;
 }
 
 html.canvalier-dark-mode .ic-DashboardCard__header_content {
-  background-color: transparent !important;
+  background-color: #373737 !important;
 }
 
 /* Course card title - keep original dark overlay */
