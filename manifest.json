@@ -34,7 +34,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["icons/*.png"],
+      "resources": ["icons/*.png", "modules/*.js"],
       "matches": ["https://*.instructure.com/*"]
     }
   ],
