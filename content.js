@@ -40,6 +40,374 @@ const browserAPI = (() => {
   }
 })();
 
+// IMMEDIATELY apply dark mode ASAP to prevent white flash on page load
+// This runs before settings load, so we check the setting from storage directly
+(async function() {
+  const result = await browserAPI.storage.local.get(['darkMode']);
+  if (result.darkMode === true) {
+    console.log('🌙 Applying dark mode immediately...');
+
+    // Create and inject dark mode styles immediately
+    const darkModeStyle = document.createElement('style');
+    darkModeStyle.id = 'canvalier-dark-mode';
+    darkModeStyle.textContent = `
+      /* Canvalier Dark Mode */
+
+      /* Main backgrounds - body and main containers */
+      body,
+      #application,
+      #main,
+      .ic-Layout-wrapper,
+      .ic-app-main-content,
+      #dashboard,
+      #dashboard-app-container,
+      #dashboard_header_container,
+      .right-side-wrapper,
+      #right-side {
+        background-color: #2b2b2b !important;
+        color: #c3c3c3 !important;
+      }
+
+      /* Left navigation sidebar */
+      #left-side,
+      .ic-app-course-menu,
+      .ic-app-course-nav-toggle-and-crumbs {
+        background-color: #2b2b2b !important;
+      }
+
+      /* Canvas header */
+      .ic-app-header,
+      #header,
+      .ic-app-header__main-navigation,
+      .ic-app-header__secondary-navigation {
+        background-color: #1f1f1f !important;
+        border-bottom-color: #555555 !important;
+      }
+
+      .ic-app-header__menu-list-item,
+      .ic-app-header__menu-list-link {
+        color: #c3c3c3 !important;
+      }
+
+      .ic-app-header__menu-list-link:hover {
+        background-color: #373737 !important;
+      }
+
+      /* Course cards - dark styling */
+      .ic-DashboardCard {
+        background-color: #373737 !important;
+        border-color: #555555 !important;
+      }
+
+      .ic-DashboardCard__header {
+        background-color: transparent !important;
+      }
+
+      /* Course card title - add dark overlay for readability */
+      .ic-DashboardCard__header-title {
+        color: #ffffff !important;
+        background-color: rgba(0, 0, 0, 0.7) !important;
+        padding: 8px !important;
+      }
+
+      .ic-DashboardCard__header-subtitle,
+      .ic-DashboardCard__header-term {
+        color: #e0e0e0 !important;
+      }
+
+      /* Course card action container (footer area) */
+      .ic-DashboardCard__action-container,
+      .ic-DashboardCard__action-layout {
+        background-color: #373737 !important;
+        border-top-color: #555555 !important;
+      }
+
+      .ic-DashboardCard__action-container a,
+      .ic-DashboardCard__action-layout a {
+        color: #7ba3d1 !important;
+      }
+
+      .ic-DashboardCard__action-container button,
+      .ic-DashboardCard__action-layout button {
+        color: #c3c3c3 !important;
+      }
+
+      /* Dashboard header */
+      .ic-Dashboard-header,
+      .ic-Dashboard-header__layout {
+        background-color: #2b2b2b !important;
+        color: #c3c3c3 !important;
+      }
+
+      /* Right sidebar elements */
+      .to-do-list,
+      .events_list,
+      .coming_up,
+      .recent_feedback,
+      .Sidebar__TodoListContainer,
+      .todo-list-header,
+      .todo-list,
+      .to-do-list__item,
+      .event-list-item {
+        background-color: #373737 !important;
+        color: #c3c3c3 !important;
+        border-color: #555555 !important;
+      }
+
+      /* Canvas options box - dark theme */
+      .canvas-options-box {
+        background-color: #373737 !important;
+        border-color: #555555 !important;
+      }
+
+      .canvas-options-header {
+        background-color: #2b2b2b !important;
+        border-bottom-color: #555555 !important;
+        color: #c3c3c3 !important;
+      }
+
+      .canvas-options-content,
+      .canvas-options-inner {
+        background-color: #373737 !important;
+      }
+
+      .canvas-option-item {
+        background-color: #373737 !important;
+        border-bottom-color: #555555 !important;
+      }
+
+      .canvas-option-label {
+        color: #c3c3c3 !important;
+      }
+
+      .canvas-options-title {
+        color: #c3c3c3 !important;
+      }
+
+      /* Assignment summaries - clearly visible on dark background */
+      .canvas-summary-container {
+        background-color: #373737 !important;
+        border-color: #555555 !important;
+        padding: 10px !important;
+      }
+
+      .assignment-summary {
+        background-color: #424242 !important;
+        color: #c3c3c3 !important;
+        border-color: #666666 !important;
+        padding: 8px !important;
+        margin-bottom: 8px !important;
+      }
+
+      .assignment-summary:hover {
+        background-color: #4a4a4a !important;
+      }
+
+      .assignment-name {
+        color: #e0e0e0 !important;
+      }
+
+      .assignment-name a {
+        color: #7ba3d1 !important;
+      }
+
+      .assignment-name a:hover {
+        color: #9ac0e8 !important;
+      }
+
+      .assignment-date {
+        color: #b0b0b0 !important;
+      }
+
+      .no-assignments-message {
+        color: #999999 !important;
+        background-color: #373737 !important;
+        padding: 12px !important;
+      }
+
+      .assignment-summary-loading {
+        background-color: #424242 !important;
+        color: #888888 !important;
+        padding: 12px !important;
+      }
+
+      .mark-done-btn {
+        background-color: #4a4a4a !important;
+        color: #c3c3c3 !important;
+        border-color: #666666 !important;
+      }
+
+      .mark-done-btn:hover {
+        background-color: #5a5a5a !important;
+      }
+
+      .show-more-btn {
+        background-color: #4a4a4a !important;
+        color: #c3c3c3 !important;
+        border-color: #666666 !important;
+      }
+
+      .show-more-btn:hover {
+        background-color: #5a5a5a !important;
+      }
+
+      /* General text colors */
+      h1, h2, h3, h4, h5, h6,
+      .ic-Dashboard-header__title {
+        color: #c3c3c3 !important;
+      }
+
+      /* Main content text on dark backgrounds */
+      #content p,
+      #content div,
+      #content span,
+      #content li,
+      .user_content {
+        color: #c3c3c3 !important;
+      }
+
+      /* Links */
+      a {
+        color: #7ba3d1 !important;
+      }
+
+      a:hover {
+        color: #9ac0e8 !important;
+      }
+
+      /* Left sidebar links */
+      #left-side a,
+      .ic-app-course-menu a {
+        color: #7ba3d1 !important;
+      }
+
+      #left-side a:hover,
+      .ic-app-course-menu a:hover {
+        background-color: #373737 !important;
+      }
+
+      /* Input fields */
+      input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+      textarea,
+      select,
+      .ic-Input {
+        background-color: #373737 !important;
+        color: #c3c3c3 !important;
+        border-color: #555555 !important;
+      }
+
+      /* Buttons - but exclude color picker buttons */
+      button:not([class*="ColorPicker"]):not([class*="color-picker"]),
+      .btn:not([class*="ColorPicker"]):not([class*="color-picker"]),
+      .Button:not([class*="ColorPicker"]):not([class*="color-picker"]) {
+        background-color: #4a4a4a !important;
+        color: #c3c3c3 !important;
+        border-color: #555555 !important;
+      }
+
+      button:not([class*="ColorPicker"]):not([class*="color-picker"]):hover,
+      .btn:not([class*="ColorPicker"]):not([class*="color-picker"]):hover,
+      .Button:not([class*="ColorPicker"]):not([class*="color-picker"]):hover {
+        background-color: #5a5a5a !important;
+      }
+
+      /* Exclude color swatches from dark mode */
+      button[class*="ColorPicker"],
+      button[class*="color-picker"],
+      button[class*="ColorButton"],
+      .ColorPicker__Container button,
+      [class*="ColorPicker"] button {
+        background-color: var(--color, inherit) !important;
+        color: inherit !important;
+        border-color: #888888 !important;
+      }
+
+      /* Tables */
+      table,
+      .table,
+      table th,
+      table td {
+        background-color: #373737 !important;
+        color: #c3c3c3 !important;
+        border-color: #555555 !important;
+      }
+
+      table tr:hover,
+      .table tr:hover {
+        background-color: #4a4a4a !important;
+      }
+
+      /* Modals and overlays */
+      .ui-dialog,
+      .ui-widget-content,
+      .ui-widget-header,
+      .ReactModal__Content {
+        background-color: #373737 !important;
+        color: #c3c3c3 !important;
+        border-color: #555555 !important;
+      }
+
+      /* Code blocks */
+      code, pre,
+      .CodeMirror {
+        background-color: #1f1f1f !important;
+        color: #c3c3c3 !important;
+      }
+
+      /* Scrollbars */
+      ::-webkit-scrollbar {
+        background-color: #2b2b2b !important;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background-color: #555555 !important;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background-color: #666666 !important;
+      }
+
+      /* Toggle switches - keep their colors for visibility */
+      .canvas-toggle-slider {
+        background-color: #cccccc !important;
+      }
+
+      input:checked + .canvas-toggle-slider {
+        background-color: #4CAF50 !important;
+      }
+
+      /* Range sliders */
+      .canvas-range-slider {
+        background-color: #dddddd !important;
+      }
+
+      .canvas-range-slider::-webkit-slider-thumb {
+        background-color: #2b2b2b !important;
+      }
+
+      .canvas-range-slider::-moz-range-thumb {
+        background-color: #2b2b2b !important;
+      }
+    `;
+
+    // Inject immediately - even before DOM is fully loaded
+    if (document.head) {
+      document.head.appendChild(darkModeStyle);
+    } else {
+      // If head doesn't exist yet, wait for it
+      const observer = new MutationObserver(() => {
+        if (document.head) {
+          document.head.appendChild(darkModeStyle);
+          observer.disconnect();
+        }
+      });
+      observer.observe(document.documentElement, { childList: true });
+    }
+
+    console.log('✅ Dark mode applied immediately');
+  }
+})();
+
 // IMMEDIATELY start checking for banner to hide it ASAP (before anything else loads)
 // This runs before settings load, so we check the setting from storage directly
 (async function() {
@@ -2160,113 +2528,29 @@ function applyDarkMode() {
   darkModeStyle.textContent = `
     /* Canvalier Dark Mode */
 
-    /* Main backgrounds */
+    /* Main backgrounds - body and main containers */
     body,
     #application,
     #main,
     .ic-Layout-wrapper,
     .ic-app-main-content,
-    .ic-DashboardCard,
-    .ic-DashboardCard__header,
-    .ic-DashboardCard__header-button,
-    .ic-DashboardCard__header-subtitle,
-    .ic-DashboardCard__header-term,
-    .ic-DashboardCard__action-container,
-    .ic-DashboardCard__action-layout,
     #dashboard,
     #dashboard-app-container,
     #dashboard_header_container,
     .right-side-wrapper,
-    #right-side,
-    .to-do-list,
-    .events_list,
-    .coming_up,
-    .recent_feedback {
+    #right-side {
       background-color: #2b2b2b !important;
       color: #c3c3c3 !important;
     }
 
-    /* Secondary backgrounds */
-    .ic-DashboardCard__header-hero,
-    .canvas-options-box,
-    .canvas-options-content,
-    .assignment-summary,
-    .canvas-summary-container,
-    .Sidebar__TodoListContainer,
-    .todo-list-header,
-    .todo-list,
-    .todo-list-item,
-    .events_list .event-list-item,
-    .to-do-list__item,
-    .coming_up .event-list-item,
-    .recent_feedback .event-list-item {
-      background-color: #373737 !important;
-      color: #c3c3c3 !important;
+    /* Left navigation sidebar */
+    #left-side,
+    .ic-app-course-menu,
+    .ic-app-course-nav-toggle-and-crumbs {
+      background-color: #2b2b2b !important;
     }
 
-    /* Text colors */
-    h1, h2, h3, h4, h5, h6,
-    p, span, div, li, a,
-    .ic-DashboardCard__header-title,
-    .canvas-option-label,
-    .assignment-name,
-    .assignment-date,
-    .no-assignments-message,
-    .event-list-item__title,
-    .event-list-item__info,
-    .to-do-list__item-title,
-    .to-do-list__item-detail {
-      color: #c3c3c3 !important;
-    }
-
-    /* Links */
-    a, a:visited {
-      color: #7ba3d1 !important;
-    }
-
-    a:hover {
-      color: #9ac0e8 !important;
-    }
-
-    /* Borders */
-    .ic-DashboardCard,
-    .assignment-summary,
-    .canvas-summary-container,
-    .canvas-options-box,
-    .to-do-list__item,
-    .event-list-item,
-    input, textarea, select {
-      border-color: #555555 !important;
-    }
-
-    /* Input fields */
-    input, textarea, select,
-    input[type="text"],
-    input[type="email"],
-    input[type="search"],
-    .ic-Input {
-      background-color: #373737 !important;
-      color: #c3c3c3 !important;
-      border-color: #555555 !important;
-    }
-
-    /* Buttons */
-    button,
-    .btn,
-    .Button,
-    .ic-DashboardCard__header-button {
-      background-color: #4a4a4a !important;
-      color: #c3c3c3 !important;
-      border-color: #555555 !important;
-    }
-
-    button:hover,
-    .btn:hover,
-    .Button:hover {
-      background-color: #5a5a5a !important;
-    }
-
-    /* Canvas specific elements */
+    /* Canvas header */
     .ic-app-header,
     #header,
     .ic-app-header__main-navigation,
@@ -2284,10 +2568,233 @@ function applyDarkMode() {
       background-color: #373737 !important;
     }
 
-    /* Dashboard specific */
+    /* Course cards - dark styling */
+    .ic-DashboardCard {
+      background-color: #373737 !important;
+      border-color: #555555 !important;
+    }
+
+    .ic-DashboardCard__header {
+      background-color: transparent !important;
+    }
+
+    /* Course card title - add dark overlay for readability */
+    .ic-DashboardCard__header-title {
+      color: #ffffff !important;
+      background-color: rgba(0, 0, 0, 0.7) !important;
+      padding: 8px !important;
+    }
+
+    .ic-DashboardCard__header-subtitle,
+    .ic-DashboardCard__header-term {
+      color: #e0e0e0 !important;
+    }
+
+    /* Course card action container (footer area) */
+    .ic-DashboardCard__action-container,
+    .ic-DashboardCard__action-layout {
+      background-color: #373737 !important;
+      border-top-color: #555555 !important;
+    }
+
+    .ic-DashboardCard__action-container a,
+    .ic-DashboardCard__action-layout a {
+      color: #7ba3d1 !important;
+    }
+
+    .ic-DashboardCard__action-container button,
+    .ic-DashboardCard__action-layout button {
+      color: #c3c3c3 !important;
+    }
+
+    /* Dashboard header */
     .ic-Dashboard-header,
     .ic-Dashboard-header__layout {
       background-color: #2b2b2b !important;
+      color: #c3c3c3 !important;
+    }
+
+    /* Right sidebar elements */
+    .to-do-list,
+    .events_list,
+    .coming_up,
+    .recent_feedback,
+    .Sidebar__TodoListContainer,
+    .todo-list-header,
+    .todo-list,
+    .to-do-list__item,
+    .event-list-item {
+      background-color: #373737 !important;
+      color: #c3c3c3 !important;
+      border-color: #555555 !important;
+    }
+
+    /* Canvas options box - dark theme */
+    .canvas-options-box {
+      background-color: #373737 !important;
+      border-color: #555555 !important;
+    }
+
+    .canvas-options-header {
+      background-color: #2b2b2b !important;
+      border-bottom-color: #555555 !important;
+      color: #c3c3c3 !important;
+    }
+
+    .canvas-options-content,
+    .canvas-options-inner {
+      background-color: #373737 !important;
+    }
+
+    .canvas-option-item {
+      background-color: #373737 !important;
+      border-bottom-color: #555555 !important;
+    }
+
+    .canvas-option-label {
+      color: #c3c3c3 !important;
+    }
+
+    .canvas-options-title {
+      color: #c3c3c3 !important;
+    }
+
+    /* Assignment summaries - clearly visible on dark background */
+    .canvas-summary-container {
+      background-color: #373737 !important;
+      border-color: #555555 !important;
+      padding: 10px !important;
+    }
+
+    .assignment-summary {
+      background-color: #424242 !important;
+      color: #c3c3c3 !important;
+      border-color: #666666 !important;
+      padding: 8px !important;
+      margin-bottom: 8px !important;
+    }
+
+    .assignment-summary:hover {
+      background-color: #4a4a4a !important;
+    }
+
+    .assignment-name {
+      color: #e0e0e0 !important;
+    }
+
+    .assignment-name a {
+      color: #7ba3d1 !important;
+    }
+
+    .assignment-name a:hover {
+      color: #9ac0e8 !important;
+    }
+
+    .assignment-date {
+      color: #b0b0b0 !important;
+    }
+
+    .no-assignments-message {
+      color: #999999 !important;
+      background-color: #373737 !important;
+      padding: 12px !important;
+    }
+
+    .assignment-summary-loading {
+      background-color: #424242 !important;
+      color: #888888 !important;
+      padding: 12px !important;
+    }
+
+    .mark-done-btn {
+      background-color: #4a4a4a !important;
+      color: #c3c3c3 !important;
+      border-color: #666666 !important;
+    }
+
+    .mark-done-btn:hover {
+      background-color: #5a5a5a !important;
+    }
+
+    .show-more-btn {
+      background-color: #4a4a4a !important;
+      color: #c3c3c3 !important;
+      border-color: #666666 !important;
+    }
+
+    .show-more-btn:hover {
+      background-color: #5a5a5a !important;
+    }
+
+    /* General text colors */
+    h1, h2, h3, h4, h5, h6,
+    .ic-Dashboard-header__title {
+      color: #c3c3c3 !important;
+    }
+
+    /* Main content text on dark backgrounds */
+    #content p,
+    #content div,
+    #content span,
+    #content li,
+    .user_content {
+      color: #c3c3c3 !important;
+    }
+
+    /* Links */
+    a {
+      color: #7ba3d1 !important;
+    }
+
+    a:hover {
+      color: #9ac0e8 !important;
+    }
+
+    /* Left sidebar links */
+    #left-side a,
+    .ic-app-course-menu a {
+      color: #7ba3d1 !important;
+    }
+
+    #left-side a:hover,
+    .ic-app-course-menu a:hover {
+      background-color: #373737 !important;
+    }
+
+    /* Input fields */
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+    textarea,
+    select,
+    .ic-Input {
+      background-color: #373737 !important;
+      color: #c3c3c3 !important;
+      border-color: #555555 !important;
+    }
+
+    /* Buttons - but exclude color picker buttons */
+    button:not([class*="ColorPicker"]):not([class*="color-picker"]),
+    .btn:not([class*="ColorPicker"]):not([class*="color-picker"]),
+    .Button:not([class*="ColorPicker"]):not([class*="color-picker"]) {
+      background-color: #4a4a4a !important;
+      color: #c3c3c3 !important;
+      border-color: #555555 !important;
+    }
+
+    button:not([class*="ColorPicker"]):not([class*="color-picker"]):hover,
+    .btn:not([class*="ColorPicker"]):not([class*="color-picker"]):hover,
+    .Button:not([class*="ColorPicker"]):not([class*="color-picker"]):hover {
+      background-color: #5a5a5a !important;
+    }
+
+    /* Exclude color swatches from dark mode */
+    button[class*="ColorPicker"],
+    button[class*="color-picker"],
+    button[class*="ColorButton"],
+    .ColorPicker__Container button,
+    [class*="ColorPicker"] button {
+      background-color: var(--color, inherit) !important;
+      color: inherit !important;
+      border-color: #888888 !important;
     }
 
     /* Tables */
@@ -2335,40 +2842,9 @@ function applyDarkMode() {
       background-color: #666666 !important;
     }
 
-    /* Assignment summary specific */
-    .assignment-summary-loading {
-      background-color: #373737 !important;
-      color: #888888 !important;
-    }
-
-    .mark-done-btn {
-      background-color: #4a4a4a !important;
-      color: #c3c3c3 !important;
-      border-color: #555555 !important;
-    }
-
-    .mark-done-btn:hover {
-      background-color: #5a5a5a !important;
-    }
-
-    /* Ensure custom images still show with proper overlay */
-    .ic-DashboardCard__header_image {
-      opacity: 1 !important;
-    }
-
-    /* Canvas options box styling */
-    .canvas-options-header {
-      background-color: #373737 !important;
-      border-bottom-color: #555555 !important;
-    }
-
-    .canvas-option-item {
-      border-bottom-color: #555555 !important;
-    }
-
-    /* Toggle switches - keep their original colors for visibility */
+    /* Toggle switches - keep their colors for visibility */
     .canvas-toggle-slider {
-      background-color: #555555 !important;
+      background-color: #cccccc !important;
     }
 
     input:checked + .canvas-toggle-slider {
@@ -2377,15 +2853,15 @@ function applyDarkMode() {
 
     /* Range sliders */
     .canvas-range-slider {
-      background-color: #555555 !important;
+      background-color: #dddddd !important;
     }
 
     .canvas-range-slider::-webkit-slider-thumb {
-      background-color: #c3c3c3 !important;
+      background-color: #2b2b2b !important;
     }
 
     .canvas-range-slider::-moz-range-thumb {
-      background-color: #c3c3c3 !important;
+      background-color: #2b2b2b !important;
     }
   `;
 
