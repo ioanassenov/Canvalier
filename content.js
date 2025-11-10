@@ -154,30 +154,44 @@ const browserAPI = (() => {
         return appliedCount > 0;
       };
 
-      // Try immediately
+      // Try immediately - just once, then let main init handle updates
       if (applyImages()) {
         console.log('⚡ Custom images applied immediately');
       }
 
-      // Watch for new cards being added
-      const observer = new MutationObserver(() => {
-        applyImages();
-      });
+      // Use a more targeted observer that only watches for the dashboard cards container
+      // This prevents excessive re-applying
+      const dashboardContainer = document.querySelector('#dashboard-planner, #dashboard, #application');
+      if (dashboardContainer) {
+        let debounceTimer;
+        const observer = new MutationObserver(() => {
+          clearTimeout(debounceTimer);
+          debounceTimer = setTimeout(() => {
+            const cards = document.querySelectorAll('.ic-DashboardCard');
+            if (cards.length > 0) {
+              applyImages();
+            }
+          }, 200); // Debounce to prevent rapid re-applies
+        });
 
-      observer.observe(document.documentElement, {
-        childList: true,
-        subtree: true
-      });
+        observer.observe(dashboardContainer, {
+          childList: true,
+          subtree: false // Only watch direct children, not deep changes
+        });
 
-      // Stop observing after 5 seconds (main init will take over)
-      setTimeout(() => {
-        observer.disconnect();
-      }, 5000);
+        // Stop observing after 3 seconds (main init will take over)
+        setTimeout(() => {
+          observer.disconnect();
+        }, 3000);
+      }
     }
 })();
 
 // Cache for assignment data to avoid re-fetching
 const assignmentCache = new Map();
+
+// Cache for pending fetch promises to prevent duplicate concurrent requests
+const pendingFetches = new Map();
 
 // Cache version - increment this when API query changes to invalidate old cache
 const CACHE_VERSION = 2;
@@ -569,33 +583,56 @@ async function fetchAssignments(courseId) {
     return assignmentCache.get(cacheKey);
   }
 
+  // Check if there's already a pending fetch for this course
+  if (pendingFetches.has(cacheKey)) {
+    console.log(`⏳ Waiting for pending fetch for course ${courseId}`);
+    return pendingFetches.get(cacheKey);
+  }
+
   try {
     const baseUrl = window.location.origin;
     // Include submission data to check if student has submitted
     const url = `${baseUrl}/api/v1/courses/${courseId}/assignments?per_page=100&order_by=due_at&include[]=submission`;
     console.log(`📡 Fetching assignments from: ${url}`);
 
-    const response = await fetch(url, {
+    // Create the fetch promise and store it
+    const fetchPromise = fetch(url, {
       headers: {
         'Accept': 'application/json'
       }
+    })
+    .then(async response => {
+      console.log(`📊 API Response status: ${response.status} ${response.statusText} for course ${courseId}`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const assignments = await response.json();
+      console.log(`✅ Fetched ${assignments.length} total assignments for course ${courseId}`);
+
+      // Cache the results with version
+      assignmentCache.set(cacheKey, assignments);
+
+      // Remove from pending fetches
+      pendingFetches.delete(cacheKey);
+
+      return assignments;
+    })
+    .catch(error => {
+      console.error(`❌ Error fetching assignments for course ${courseId}:`, error);
+      // Remove from pending fetches even on error
+      pendingFetches.delete(cacheKey);
+      return [];
     });
 
-    console.log(`📊 API Response status: ${response.status} ${response.statusText}`);
+    // Store the pending promise
+    pendingFetches.set(cacheKey, fetchPromise);
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const assignments = await response.json();
-    console.log(`✅ Fetched ${assignments.length} total assignments for course ${courseId}`);
-
-    // Cache the results with version
-    assignmentCache.set(cacheKey, assignments);
-
-    return assignments;
+    return fetchPromise;
   } catch (error) {
-    console.error(`❌ Error fetching assignments for course ${courseId}:`, error);
+    console.error(`❌ Error setting up fetch for course ${courseId}:`, error);
+    pendingFetches.delete(cacheKey);
     return [];
   }
 }
@@ -1904,6 +1941,7 @@ function setupPersistenceObserver() {
 
   // Much faster response during initial load - no debounce
   let debounceTimer;
+  let lastImageApplyTime = 0;
   const observer = new MutationObserver((mutations) => {
     clearTimeout(debounceTimer);
 
@@ -1947,8 +1985,12 @@ function setupPersistenceObserver() {
         log('♻️', `Re-inserted ${reinserted} ${isInitialLoading ? 'loading placeholders' : 'summaries'}`);
       }
 
-      // Reapply custom images after any DOM changes to course cards
-      applyCustomImages();
+      // Reapply custom images, but throttle to max once per 300ms to prevent flashing
+      const now = Date.now();
+      if (now - lastImageApplyTime > 300) {
+        applyCustomImages();
+        lastImageApplyTime = now;
+      }
     }, debounceTime);
   });
 
@@ -2210,7 +2252,8 @@ async function init() {
       applyCanvasToDoVisibility();
       applyRecentFeedbackVisibility();
       applyComingUpVisibility();
-      applyCustomImages();
+      // Note: applyCustomImages() is handled by the immediate IIFE at the top
+      // and will be called again by processCourseCards() after loading
 
       // Kick off ALL background work in parallel - don't await any of it
       cleanupMarkedDone();           // Runs async, doesn't block
