@@ -136,6 +136,15 @@ html.canvalier-dark-mode [data-testid="ToDoSidebarItem__InformationRow"] li {
   color: #c3c3c3 !important;
 }
 
+/* Todo list item icons - make white in dark mode */
+html.canvalier-dark-mode .ToDoSidebarItem__Icon,
+html.canvalier-dark-mode .ToDoSidebarItem__Icon svg,
+html.canvalier-dark-mode .ToDoSidebarItem__Icon path {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+
 /* Event/feedback details - remove white gradient streak */
 html.canvalier-dark-mode .event-details,
 html.canvalier-dark-mode .event-details__title,
