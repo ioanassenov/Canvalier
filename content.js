@@ -223,6 +223,9 @@ const modules = {
   optionsPanel: null
 };
 
+// Global references to modules (for cleaner access without "modules." prefix)
+let optionsPanel = null;
+
 // Load a module dynamically (load once, use multiple times)
 async function loadModule(moduleName) {
   if (modules[moduleName]) {
@@ -1798,16 +1801,16 @@ function setupCustomImageTabObserver() {
 // These are thin wrappers that call into the dynamically loaded module
 
 function insertOptionsBox() {
-  if (modules.optionsPanel) {
-    modules.optionsPanel.insertOptionsBox();
+  if (optionsPanel) {
+    optionsPanel.insertOptionsBox();
   } else {
     console.error('Options panel module not loaded');
   }
 }
 
 function setupOptionsBoxObserver() {
-  if (modules.optionsPanel) {
-    modules.optionsPanel.setupOptionsBoxObserver();
+  if (optionsPanel) {
+    optionsPanel.setupOptionsBoxObserver();
   } else {
     console.error('Options panel module not loaded');
   }
@@ -2159,6 +2162,8 @@ async function init() {
           addSummaryToCard,
           optionsBoxObserverSetup
         });
+        // Create global reference for cleaner access
+        optionsPanel = modules.optionsPanel;
         log('✅', 'Options panel module initialized');
       } catch (error) {
         console.error('❌ Failed to load options panel module:', error);
