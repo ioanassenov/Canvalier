@@ -208,6 +208,7 @@ let optionsBoxObserverSetup = false;
 // Extension settings
 const extensionSettings = {
   canvalierEnabled: true, // Default to extension being enabled
+  darkMode: false, // Default to dark mode being off
   use24HourFormat: false, // Default to 12-hour format
   showOverdue: true, // Default to showing overdue assignments
   showTimeRemaining: false, // Default to showing due date instead of time remaining
@@ -225,10 +226,13 @@ const extensionSettings = {
 
 // Load settings from browser storage
 async function loadSettings() {
-  const result = await browserAPI.storage.local.get(['canvalierEnabled', 'use24HourFormat', 'showOverdue', 'showTimeRemaining', 'assignmentRangeWeeks', 'minimizedCardCount', 'hideCanvasToDo', 'hideDashboardHeader', 'hideRecentFeedback', 'hideComingUp', 'customImages', 'imageOpacityPerCourse', 'markedDone']);
+  const result = await browserAPI.storage.local.get(['canvalierEnabled', 'darkMode', 'use24HourFormat', 'showOverdue', 'showTimeRemaining', 'assignmentRangeWeeks', 'minimizedCardCount', 'hideCanvasToDo', 'hideDashboardHeader', 'hideRecentFeedback', 'hideComingUp', 'customImages', 'imageOpacityPerCourse', 'markedDone']);
 
   if (result.canvalierEnabled !== undefined) {
     extensionSettings.canvalierEnabled = result.canvalierEnabled;
+  }
+  if (result.darkMode !== undefined) {
+    extensionSettings.darkMode = result.darkMode;
   }
   if (result.use24HourFormat !== undefined) {
     extensionSettings.use24HourFormat = result.use24HourFormat;
@@ -1653,6 +1657,13 @@ function createOptionsBox() {
             <span class="canvas-toggle-slider"></span>
           </label>
         </div>
+        <div class="canvas-option-item">
+          <span class="canvas-option-label" style="font-weight: bold;">Dark Mode</span>
+          <label class="canvas-toggle-switch">
+            <input type="checkbox" id="dark-mode-toggle" ${extensionSettings.darkMode ? 'checked' : ''}>
+            <span class="canvas-toggle-slider"></span>
+          </label>
+        </div>
         <div class="canvas-option-item canvas-option-slider-item">
           <div class="canvas-slider-container">
             <label class="canvas-option-label" id="assignment-range-label">${getRangeLabel(extensionSettings.assignmentRangeWeeks)}</label>
@@ -1745,6 +1756,20 @@ function createOptionsBox() {
     } else {
       // Disable all Canvalier effects
       disableCanvalierEffects();
+    }
+  });
+
+  // Add dark mode toggle functionality
+  const darkModeToggle = optionsBox.querySelector('#dark-mode-toggle');
+  darkModeToggle.addEventListener('change', async (e) => {
+    const isDarkMode = e.target.checked;
+    await saveSetting('darkMode', isDarkMode);
+    log('🌙', `Dark mode ${isDarkMode ? 'enabled' : 'disabled'}`);
+
+    if (isDarkMode) {
+      applyDarkMode();
+    } else {
+      removeDarkMode();
     }
   });
 
@@ -2118,6 +2143,270 @@ function setupPersistenceObserver() {
   }, 2000);
 }
 
+// Apply dark mode to Canvas
+function applyDarkMode() {
+  log('🌙', 'Applying dark mode...');
+
+  // Check if dark mode style already exists
+  let darkModeStyle = document.getElementById('canvalier-dark-mode');
+  if (darkModeStyle) {
+    log('🌙', 'Dark mode style already exists');
+    return;
+  }
+
+  // Create dark mode style element
+  darkModeStyle = document.createElement('style');
+  darkModeStyle.id = 'canvalier-dark-mode';
+  darkModeStyle.textContent = `
+    /* Canvalier Dark Mode */
+
+    /* Main backgrounds */
+    body,
+    #application,
+    #main,
+    .ic-Layout-wrapper,
+    .ic-app-main-content,
+    .ic-DashboardCard,
+    .ic-DashboardCard__header,
+    .ic-DashboardCard__header-button,
+    .ic-DashboardCard__header-subtitle,
+    .ic-DashboardCard__header-term,
+    .ic-DashboardCard__action-container,
+    .ic-DashboardCard__action-layout,
+    #dashboard,
+    #dashboard-app-container,
+    #dashboard_header_container,
+    .right-side-wrapper,
+    #right-side,
+    .to-do-list,
+    .events_list,
+    .coming_up,
+    .recent_feedback {
+      background-color: #2b2b2b !important;
+      color: #c3c3c3 !important;
+    }
+
+    /* Secondary backgrounds */
+    .ic-DashboardCard__header-hero,
+    .canvas-options-box,
+    .canvas-options-content,
+    .assignment-summary,
+    .canvas-summary-container,
+    .Sidebar__TodoListContainer,
+    .todo-list-header,
+    .todo-list,
+    .todo-list-item,
+    .events_list .event-list-item,
+    .to-do-list__item,
+    .coming_up .event-list-item,
+    .recent_feedback .event-list-item {
+      background-color: #373737 !important;
+      color: #c3c3c3 !important;
+    }
+
+    /* Text colors */
+    h1, h2, h3, h4, h5, h6,
+    p, span, div, li, a,
+    .ic-DashboardCard__header-title,
+    .canvas-option-label,
+    .assignment-name,
+    .assignment-date,
+    .no-assignments-message,
+    .event-list-item__title,
+    .event-list-item__info,
+    .to-do-list__item-title,
+    .to-do-list__item-detail {
+      color: #c3c3c3 !important;
+    }
+
+    /* Links */
+    a, a:visited {
+      color: #7ba3d1 !important;
+    }
+
+    a:hover {
+      color: #9ac0e8 !important;
+    }
+
+    /* Borders */
+    .ic-DashboardCard,
+    .assignment-summary,
+    .canvas-summary-container,
+    .canvas-options-box,
+    .to-do-list__item,
+    .event-list-item,
+    input, textarea, select {
+      border-color: #555555 !important;
+    }
+
+    /* Input fields */
+    input, textarea, select,
+    input[type="text"],
+    input[type="email"],
+    input[type="search"],
+    .ic-Input {
+      background-color: #373737 !important;
+      color: #c3c3c3 !important;
+      border-color: #555555 !important;
+    }
+
+    /* Buttons */
+    button,
+    .btn,
+    .Button,
+    .ic-DashboardCard__header-button {
+      background-color: #4a4a4a !important;
+      color: #c3c3c3 !important;
+      border-color: #555555 !important;
+    }
+
+    button:hover,
+    .btn:hover,
+    .Button:hover {
+      background-color: #5a5a5a !important;
+    }
+
+    /* Canvas specific elements */
+    .ic-app-header,
+    #header,
+    .ic-app-header__main-navigation,
+    .ic-app-header__secondary-navigation {
+      background-color: #1f1f1f !important;
+      border-bottom-color: #555555 !important;
+    }
+
+    .ic-app-header__menu-list-item,
+    .ic-app-header__menu-list-link {
+      color: #c3c3c3 !important;
+    }
+
+    .ic-app-header__menu-list-link:hover {
+      background-color: #373737 !important;
+    }
+
+    /* Dashboard specific */
+    .ic-Dashboard-header,
+    .ic-Dashboard-header__layout {
+      background-color: #2b2b2b !important;
+    }
+
+    /* Tables */
+    table,
+    .table,
+    table th,
+    table td {
+      background-color: #373737 !important;
+      color: #c3c3c3 !important;
+      border-color: #555555 !important;
+    }
+
+    table tr:hover,
+    .table tr:hover {
+      background-color: #4a4a4a !important;
+    }
+
+    /* Modals and overlays */
+    .ui-dialog,
+    .ui-widget-content,
+    .ui-widget-header,
+    .ReactModal__Content {
+      background-color: #373737 !important;
+      color: #c3c3c3 !important;
+      border-color: #555555 !important;
+    }
+
+    /* Code blocks */
+    code, pre,
+    .CodeMirror {
+      background-color: #1f1f1f !important;
+      color: #c3c3c3 !important;
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      background-color: #2b2b2b !important;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: #555555 !important;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: #666666 !important;
+    }
+
+    /* Assignment summary specific */
+    .assignment-summary-loading {
+      background-color: #373737 !important;
+      color: #888888 !important;
+    }
+
+    .mark-done-btn {
+      background-color: #4a4a4a !important;
+      color: #c3c3c3 !important;
+      border-color: #555555 !important;
+    }
+
+    .mark-done-btn:hover {
+      background-color: #5a5a5a !important;
+    }
+
+    /* Ensure custom images still show with proper overlay */
+    .ic-DashboardCard__header_image {
+      opacity: 1 !important;
+    }
+
+    /* Canvas options box styling */
+    .canvas-options-header {
+      background-color: #373737 !important;
+      border-bottom-color: #555555 !important;
+    }
+
+    .canvas-option-item {
+      border-bottom-color: #555555 !important;
+    }
+
+    /* Toggle switches - keep their original colors for visibility */
+    .canvas-toggle-slider {
+      background-color: #555555 !important;
+    }
+
+    input:checked + .canvas-toggle-slider {
+      background-color: #4CAF50 !important;
+    }
+
+    /* Range sliders */
+    .canvas-range-slider {
+      background-color: #555555 !important;
+    }
+
+    .canvas-range-slider::-webkit-slider-thumb {
+      background-color: #c3c3c3 !important;
+    }
+
+    .canvas-range-slider::-moz-range-thumb {
+      background-color: #c3c3c3 !important;
+    }
+  `;
+
+  // Append to document head
+  document.head.appendChild(darkModeStyle);
+  log('✅', 'Dark mode applied');
+}
+
+// Remove dark mode from Canvas
+function removeDarkMode() {
+  log('☀️', 'Removing dark mode...');
+
+  const darkModeStyle = document.getElementById('canvalier-dark-mode');
+  if (darkModeStyle) {
+    darkModeStyle.remove();
+    log('✅', 'Dark mode removed');
+  } else {
+    log('⚠️', 'Dark mode style not found');
+  }
+}
+
 // Disable all Canvalier effects (restore Canvas to normal state)
 function disableCanvalierEffects() {
   log('🛑', 'Disabling Canvalier effects...');
@@ -2257,23 +2546,30 @@ async function init() {
   log('📍', `Current URL: ${window.location.href}`);
   log('📂', `Pathname: ${window.location.pathname}`);
 
-  // Check if we're on the dashboard
-  if (!window.location.pathname.includes('/dashboard') && window.location.pathname !== '/') {
-    log('⏭️', 'Not on dashboard page, extension will not run');
-    return;
-  }
-
-  log('✅', 'On dashboard page, proceeding with initialization');
-
   try {
+    // Load settings first (needed for both dark mode and dashboard features)
+    await loadSettings();
+
+    // Apply dark mode globally (works on all Canvas pages, not just dashboard)
+    if (extensionSettings.darkMode) {
+      applyDarkMode();
+    } else {
+      removeDarkMode();
+    }
+
+    // Check if we're on the dashboard for Canvalier dashboard features
+    if (!window.location.pathname.includes('/dashboard') && window.location.pathname !== '/') {
+      log('⏭️', 'Not on dashboard page, skipping dashboard-specific features');
+      return;
+    }
+
+    log('✅', 'On dashboard page, proceeding with dashboard initialization');
+
     // Set flag to prevent observer interference during initial load
     isInitialLoading = true;
 
-    // ONLY await what we absolutely need before showing UI
-    await Promise.all([
-      loadSettings(),      // Required: other code reads extensionSettings
-      waitForDashboard()   // Required: need course cards to exist
-    ]);
+    // Wait for dashboard to be ready
+    await waitForDashboard();
 
     // ALWAYS insert options box (so users can toggle Canvalier on/off)
     insertOptionsBox();
