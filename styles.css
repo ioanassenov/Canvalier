@@ -208,31 +208,13 @@
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
-  z-index: 0; /* Behind everything */
+  z-index: -1; /* Push behind everything using negative z-index */
   border-radius: 4px 4px 0 0; /* Match card's top rounded corners */
   pointer-events: none; /* Don't interfere with clicks */
 }
 
-/* Ensure the hero overlay sits above the custom image */
-.ic-DashboardCard__header_hero {
-  position: relative;
-  z-index: 1;
-}
-
-/* Ensure the course link and content sit above the image */
-.ic-DashboardCard__link {
-  position: relative;
-  z-index: 2;
-}
-
-/* Ensure the 3-dot menu button and its container sit above everything */
-.ic-DashboardCard__header > div:not(.ic-DashboardCard__header_hero):not(.canvalier-custom-image),
-.ic-DashboardCard__header-button-bg,
-.ic-DashboardCard__header-button,
-[data-position^="Popover"] {
-  position: relative;
-  z-index: 10 !important;
-}
+/* Don't set position or z-index on other elements - let Canvas handle its own layout */
+/* The negative z-index on the custom image ensures it stays behind everything */
 
 /* Options Box Styles */
 .canvas-options-box {
