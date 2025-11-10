@@ -37,9 +37,11 @@ Canvalier is a Chrome extension that enhances the Canvas LMS dashboard experienc
 
 ### Files
 - **manifest.json**: Chrome extension manifest (v3)
-- **content.js**: Main content script with core functionality (~2100 lines)
+- **content.js**: Main content script with core functionality (~1,145 lines)
 - **modules/**: Modular components loaded via manifest
   - **options-panel.js**: Options box creation and management (~390 lines)
+  - **custom-images.js**: Custom image functionality and color utilities (~754 lines)
+  - **assignment-manager.js**: Assignment fetching, filtering, display, and mark-as-done tracking (~650 lines)
 - **styles.css**: Styling for assignment summaries and options UI
 - **dark-mode.css**: Dark mode styling
 - **icons/**: Extension icons (16px, 48px, 128px)
@@ -53,7 +55,12 @@ The extension uses a **static module loading pattern** that complies with Manife
 **1. Static Declaration (manifest.json)**
 ```json
 "content_scripts": [{
-  "js": ["modules/options-panel.js", "content.js"],
+  "js": [
+    "modules/options-panel.js",
+    "modules/custom-images.js",
+    "modules/assignment-manager.js",
+    "content.js"
+  ],
   ...
 }]
 ```
@@ -138,6 +145,23 @@ newModule.init({
 ```javascript
 newModule.publicMethod();
 ```
+
+#### Current Modules
+
+**options-panel.js** (~390 lines)
+- Creates and manages the on-page options box UI
+- Functions: `createOptionsBox()`, `insertOptionsBox()`, `setupOptionsBoxObserver()`
+- Dependencies: extensionSettings, browserAPI, saveSetting, log, various apply/toggle functions
+
+**custom-images.js** (~754 lines)
+- Custom image functionality and color utilities
+- Functions: `getOpacityForCourse()`, `parseRgbColor()`, `rgbToHsl()`, `hslToRgb()`, `brightenColor()`, `applyTitleColorFromOverlay()`, `applyCustomImages()`, `setupColorChangeObserver()`, `enhanceColorTab()`, `injectCustomImageTab()`, `setupCustomImageTabObserver()`
+- Dependencies: extensionSettings, saveSetting, log, getCourseId
+
+**assignment-manager.js** (~650 lines)
+- Assignment fetching, filtering, display, and mark-as-done tracking
+- Functions: `toggleMarkedDone()`, `isMarkedDone()`, `cleanupMarkedDone()`, `fetchAssignments()`, `getUpcomingAssignments()`, `getTimeRemaining()`, `formatDueDate()`, `createSummaryElement()`, `insertLoadingPlaceholders()`, `addSummaryToCard()`, `prefetchAllAssignments()`, `processCourseCards()`
+- Dependencies: extensionSettings, saveSetting, log, getCourseId, assignmentCache, pendingFetches, CACHE_VERSION, applyCustomImages
 
 #### Module Loading Benefits
 
@@ -258,7 +282,6 @@ This allows tracking of external submission assignments.
 - Assignment filtering by type (quizzes, discussions, etc.)
 - Import/export settings
 - Sync settings across devices
-- Additional modules: assignment manager, custom images manager, etc.
 
 ## Known Constraints
 - Only works on Canvas LMS dashboard (`/dashboard` or `/`)
