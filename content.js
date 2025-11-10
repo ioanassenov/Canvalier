@@ -1882,12 +1882,8 @@ function createOptionsBox() {
     await saveSetting('canvalierEnabled', isEnabled);
     log('🎚️', `Canvalier ${isEnabled ? 'enabled' : 'disabled'}`);
 
-    // Notify popup to update its toggle (if it's open)
-    try {
-      await browserAPI.storage.local.set({ canvalierEnabled: isEnabled });
-    } catch (error) {
-      console.error('Error syncing toggle state:', error);
-    }
+    // Note: Popup sync happens automatically via storage change listener
+    // No need to send messages - storage change events will propagate
 
     if (isEnabled) {
       // Enable all Canvalier effects
@@ -2527,53 +2523,55 @@ new MutationObserver(() => {
   }
 }).observe(document, { subtree: true, childList: true });
 
-// Listen for messages from popup
-if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
-  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.type === 'canvalierToggleChanged') {
-      log('📬', `Received toggle change message from popup: ${message.enabled}`);
+// Listen for storage changes (for sync between popup and content script)
+if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.onChanged) {
+  chrome.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName === 'local' && changes.canvalierEnabled) {
+      const newValue = changes.canvalierEnabled.newValue;
+      if (newValue !== undefined && extensionSettings.canvalierEnabled !== newValue) {
+        log('🔄', `Storage changed: Canvalier ${newValue ? 'enabled' : 'disabled'}`);
 
-      // Update the setting
-      extensionSettings.canvalierEnabled = message.enabled;
+        // Update local setting
+        extensionSettings.canvalierEnabled = newValue;
 
-      // Update the toggle in options box if it exists
-      const optionsToggle = document.querySelector('#canvalier-enabled-toggle');
-      if (optionsToggle) {
-        optionsToggle.checked = message.enabled;
+        // Update the toggle in options box if it exists
+        const optionsToggle = document.querySelector('#canvalier-enabled-toggle');
+        if (optionsToggle && optionsToggle.checked !== newValue) {
+          optionsToggle.checked = newValue;
+        }
+
+        // Apply or remove effects
+        if (newValue) {
+          enableCanvalierEffects();
+        } else {
+          disableCanvalierEffects();
+        }
       }
-
-      // Apply or remove effects
-      if (message.enabled) {
-        enableCanvalierEffects();
-      } else {
-        disableCanvalierEffects();
-      }
-
-      sendResponse({ success: true });
     }
   });
-} else if (typeof browser !== 'undefined' && browser.runtime && browser.runtime.onMessage) {
-  browser.runtime.onMessage.addListener((message, sender) => {
-    if (message.type === 'canvalierToggleChanged') {
-      log('📬', `Received toggle change message from popup: ${message.enabled}`);
+} else if (typeof browser !== 'undefined' && browser.storage && browser.storage.onChanged) {
+  browser.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName === 'local' && changes.canvalierEnabled) {
+      const newValue = changes.canvalierEnabled.newValue;
+      if (newValue !== undefined && extensionSettings.canvalierEnabled !== newValue) {
+        log('🔄', `Storage changed: Canvalier ${newValue ? 'enabled' : 'disabled'}`);
 
-      // Update the setting
-      extensionSettings.canvalierEnabled = message.enabled;
+        // Update local setting
+        extensionSettings.canvalierEnabled = newValue;
 
-      // Update the toggle in options box if it exists
-      const optionsToggle = document.querySelector('#canvalier-enabled-toggle');
-      if (optionsToggle) {
-        optionsToggle.checked = message.enabled;
+        // Update the toggle in options box if it exists
+        const optionsToggle = document.querySelector('#canvalier-enabled-toggle');
+        if (optionsToggle && optionsToggle.checked !== newValue) {
+          optionsToggle.checked = newValue;
+        }
+
+        // Apply or remove effects
+        if (newValue) {
+          enableCanvalierEffects();
+        } else {
+          disableCanvalierEffects();
+        }
       }
-
-      // Apply or remove effects
-      if (message.enabled) {
-        enableCanvalierEffects();
-      } else {
-        disableCanvalierEffects();
-      }
-
-      return Promise.resolve({ success: true });
     }
   });
 }

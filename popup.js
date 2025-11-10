@@ -67,10 +67,10 @@ function updateStatusIndicator(isEnabled) {
   }
 }
 
-// Save the toggle state and notify content script
+// Save the toggle state (content script will sync via storage listener)
 async function saveToggleState(isEnabled) {
   try {
-    // Save to storage
+    // Save to storage - content script will detect change via storage listener
     await browserAPI.storage.local.set({ canvalierEnabled: isEnabled });
 
     console.log('Popup saved, Canvalier enabled:', isEnabled);
@@ -78,20 +78,8 @@ async function saveToggleState(isEnabled) {
     // Update status indicator
     updateStatusIndicator(isEnabled);
 
-    // Notify all Canvas tabs to refresh
-    const tabs = await browserAPI.tabs.query({ url: 'https://*.instructure.com/*' });
-
-    for (const tab of tabs) {
-      try {
-        await browserAPI.tabs.sendMessage(tab.id, {
-          type: 'canvalierToggleChanged',
-          enabled: isEnabled
-        });
-      } catch (error) {
-        // Tab might not have content script loaded, ignore
-        console.log('Could not send message to tab:', tab.id);
-      }
-    }
+    // Note: No need to send messages - storage change events automatically
+    // propagate to content scripts via their storage change listeners
   } catch (error) {
     console.error('Error saving toggle state:', error);
   }
