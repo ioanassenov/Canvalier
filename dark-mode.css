@@ -146,6 +146,13 @@ html.canvalier-dark-mode .recent_feedback_title {
   color: #c3c3c3 !important;
 }
 
+/* Remove white gradient from event-details ::after pseudo-element */
+html.canvalier-dark-mode .event-details::after {
+  background: none !important;
+  background-image: none !important;
+  display: none !important;
+}
+
 
 /* Canvas options box - dark theme */
 html.canvalier-dark-mode .canvas-options-box {
