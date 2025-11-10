@@ -1,11 +1,11 @@
 // Options Panel Module
 // Handles creation, insertion, and management of the Canvalier options box
+// This file loads BEFORE content.js (declared first in manifest.json)
 
-(function() {
-  'use strict';
+'use strict';
 
-  // This module will be initialized with dependencies from content.js
-  const OptionsPanel = {
+// This module will be initialized with dependencies from content.js
+const optionsPanel = {
     // Dependencies (set by init)
     deps: null,
 
@@ -391,7 +391,3 @@
       optionsBoxObserverSetup.value = true;
     }
   };
-
-  // Export the module
-  window.CanvalierOptionsPanel = OptionsPanel;
-})();
