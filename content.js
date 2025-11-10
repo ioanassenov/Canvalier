@@ -614,6 +614,119 @@ function getCourseId(card) {
   return null;
 }
 
+// Color utility functions for title color syncing
+function parseRgbColor(rgbString) {
+  // Parse "rgb(r, g, b)" or "rgba(r, g, b, a)" format
+  const match = rgbString.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+  if (match) {
+    return {
+      r: parseInt(match[1]),
+      g: parseInt(match[2]),
+      b: parseInt(match[3])
+    };
+  }
+  return { r: 0, g: 0, b: 0 }; // Fallback to black
+}
+
+function rgbToHsl(r, g, b) {
+  r /= 255;
+  g /= 255;
+  b /= 255;
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h, s, l = (max + min) / 2;
+
+  if (max === min) {
+    h = s = 0; // achromatic
+  } else {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+      case g: h = ((b - r) / d + 2) / 6; break;
+      case b: h = ((r - g) / d + 4) / 6; break;
+    }
+  }
+
+  return { h: h * 360, s: s * 100, l: l * 100 };
+}
+
+function hslToRgb(h, s, l) {
+  h /= 360;
+  s /= 100;
+  l /= 100;
+
+  let r, g, b;
+
+  if (s === 0) {
+    r = g = b = l; // achromatic
+  } else {
+    const hue2rgb = (p, q, t) => {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1/6) return p + (q - p) * 6 * t;
+      if (t < 1/2) return q;
+      if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+      return p;
+    };
+
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    r = hue2rgb(p, q, h + 1/3);
+    g = hue2rgb(p, q, h);
+    b = hue2rgb(p, q, h - 1/3);
+  }
+
+  return {
+    r: Math.round(r * 255),
+    g: Math.round(g * 255),
+    b: Math.round(b * 255)
+  };
+}
+
+function brightenColor(rgbString, brightnessFactor = 1.5) {
+  // Parse RGB
+  const rgb = parseRgbColor(rgbString);
+
+  // Convert to HSL
+  const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+
+  // Increase lightness for dark mode (make it brighter)
+  // Ensure we don't go below a minimum lightness for visibility
+  hsl.l = Math.min(85, Math.max(60, hsl.l * brightnessFactor));
+
+  // Also slightly increase saturation for more vibrant colors in dark mode
+  hsl.s = Math.min(100, hsl.s * 1.1);
+
+  // Convert back to RGB
+  const brightRgb = hslToRgb(hsl.h, hsl.s, hsl.l);
+
+  return `rgb(${brightRgb.r}, ${brightRgb.g}, ${brightRgb.b})`;
+}
+
+function applyTitleColorFromOverlay(card) {
+  const hero = card.querySelector('.ic-DashboardCard__header_hero');
+  const title = card.querySelector('.ic-DashboardCard__header-title');
+
+  if (!hero || !title) return;
+
+  // Get the overlay color
+  const overlayColor = window.getComputedStyle(hero).backgroundColor;
+
+  // Check if dark mode is enabled
+  const isDarkMode = document.documentElement.classList.contains('canvalier-dark-mode');
+
+  if (isDarkMode) {
+    // In dark mode, use a brighter version of the overlay color
+    const brightColor = brightenColor(overlayColor);
+    title.style.color = brightColor;
+  } else {
+    // In light mode, use the exact overlay color
+    title.style.color = overlayColor;
+  }
+}
+
 // Fetch assignments for a course
 async function fetchAssignments(courseId) {
   const cacheKey = `${courseId}_v${CACHE_VERSION}`;
@@ -1236,6 +1349,9 @@ function applyCustomImages() {
         changedCount++;
       }
     }
+
+    // Apply title color based on overlay color (for all cards, regardless of custom images)
+    applyTitleColorFromOverlay(card);
   });
 
   if (changedCount > 0) {
@@ -1257,9 +1373,13 @@ function setupColorChangeObserver() {
       if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
         const hero = mutation.target;
         if (hero.classList.contains('ic-DashboardCard__header_hero')) {
-          // Check if the parent card has a custom image applied
+          // Update title color when overlay color changes
           const card = hero.closest('.ic-DashboardCard');
           if (card) {
+            // Always update title color on overlay color change
+            applyTitleColorFromOverlay(card);
+
+            // Check if the parent card has a custom image applied to reapply images
             const header = card.querySelector('.ic-DashboardCard__header');
             if (header && header.getAttribute('data-canvalier-image-applied')) {
               needsReapply = true;
@@ -2164,6 +2284,11 @@ function setupPersistenceObserver() {
 function applyDarkMode() {
   log('🌙', 'Applying dark mode...');
   document.documentElement.classList.add('canvalier-dark-mode');
+
+  // Update all title colors to use brighter versions
+  const cards = document.querySelectorAll('.ic-DashboardCard');
+  cards.forEach(card => applyTitleColorFromOverlay(card));
+
   log('✅', 'Dark mode applied');
 }
 
@@ -2171,6 +2296,11 @@ function applyDarkMode() {
 function removeDarkMode() {
   log('☀️', 'Removing dark mode...');
   document.documentElement.classList.remove('canvalier-dark-mode');
+
+  // Update all title colors back to normal overlay colors
+  const cards = document.querySelectorAll('.ic-DashboardCard');
+  cards.forEach(card => applyTitleColorFromOverlay(card));
+
   log('✅', 'Dark mode removed');
 }
 
