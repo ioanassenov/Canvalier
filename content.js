@@ -2426,6 +2426,13 @@ function disableCanvalierEffects() {
 async function enableCanvalierEffects() {
   log('🚀', 'Enabling Canvalier effects...');
 
+  // Reapply dark mode if it was enabled (since disableCanvalierEffects removes it)
+  if (extensionSettings.darkMode) {
+    applyDarkMode();
+  } else {
+    removeDarkMode();
+  }
+
   // Apply all UI changes
   applyCanvasToDoVisibility();
   applyRecentFeedbackVisibility();
