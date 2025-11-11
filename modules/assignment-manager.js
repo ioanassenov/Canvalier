@@ -540,6 +540,8 @@ const assignmentManager = {
     const courseId = getCourseId(card);
     if (!courseId) {
       console.warn('⚠️ Could not extract course ID from card, skipping');
+      console.warn('   Card classes:', card.className);
+      console.warn('   Has course link:', !!card.querySelector('a[href*="/courses/"]'));
       return;
     }
 
