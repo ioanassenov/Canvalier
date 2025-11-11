@@ -325,9 +325,12 @@ html.canvalier-dark-mode .ic-app-header__menu-list-link:hover {
 }
 
 /* Menu item text and icon container - transparent backgrounds for proper hover effect */
-html.canvalier-dark-mode .menu-item__text,
-html.canvalier-dark-mode .menu-item-icon-container {
+html.canvalier-dark-mode .ic-app-header .menu-item__text,
+html.canvalier-dark-mode .ic-app-header .menu-item-icon-container,
+html.canvalier-dark-mode .ic-app-header__menu-list .menu-item__text,
+html.canvalier-dark-mode .ic-app-header__menu-list .menu-item-icon-container {
   background-color: transparent !important;
+  background: transparent !important;
 }
 
 /* Active nav item */
