@@ -27,6 +27,11 @@ html.canvalier-dark-mode .css-1aicfcs-view {
   background-color: #1a1a1a !important;
 }
 
+/* Extended courses panel - course subtext (section and term info) */
+html.canvalier-dark-mode .css-8bodfv-text {
+  color: #c3c3c3 !important;
+}
+
 /* Course cards - dark styling */
 html.canvalier-dark-mode .ic-DashboardCard {
   background-color: #373737 !important;
@@ -396,26 +401,19 @@ html.canvalier-dark-mode .ic-Input {
   border-color: #555555 !important;
 }
 
-/* Buttons - but exclude color picker buttons, Show All button, and dashboard options button */
-html.canvalier-dark-mode button:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]),
-html.canvalier-dark-mode .btn:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]),
-html.canvalier-dark-mode .Button:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]) {
+/* Buttons - but exclude color picker buttons, Show All button, dashboard options button, and close buttons */
+html.canvalier-dark-mode button:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]):not(.css-zvg8k4-closeButton button),
+html.canvalier-dark-mode .btn:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]):not(.css-zvg8k4-closeButton button),
+html.canvalier-dark-mode .Button:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]):not(.css-zvg8k4-closeButton button) {
   background-color: #4a4a4a !important;
   color: #c3c3c3 !important;
   border-color: #555555 !important;
 }
 
-html.canvalier-dark-mode button:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]):hover,
-html.canvalier-dark-mode .btn:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]):hover,
-html.canvalier-dark-mode .Button:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]):hover {
+html.canvalier-dark-mode button:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]):not(.css-zvg8k4-closeButton button):hover,
+html.canvalier-dark-mode .btn:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]):not(.css-zvg8k4-closeButton button):hover,
+html.canvalier-dark-mode .Button:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]):not(.css-zvg8k4-closeButton button):hover {
   background-color: #5a5a5a !important;
-}
-
-/* Extended courses panel close button - transparent background */
-html.canvalier-dark-mode .css-zvg8k4-closeButton,
-html.canvalier-dark-mode .css-zvg8k4-closeButton button {
-  background-color: transparent !important;
-  background: transparent !important;
 }
 
 /* Tables */
