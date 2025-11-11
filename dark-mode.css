@@ -32,6 +32,12 @@ html.canvalier-dark-mode .css-8bodfv-text {
   color: #c3c3c3 !important;
 }
 
+/* Extended courses panel close button - bright icon */
+html.canvalier-dark-mode .css-zvg8k4-closeButton svg,
+html.canvalier-dark-mode .css-zvg8k4-closeButton svg path {
+  fill: #e0e0e0 !important;
+}
+
 /* Course cards - dark styling */
 html.canvalier-dark-mode .ic-DashboardCard {
   background-color: #373737 !important;
