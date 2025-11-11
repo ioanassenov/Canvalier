@@ -127,6 +127,7 @@ html.canvalier-dark-mode .ToDoSidebarItem__Icon path {
 }
 
 /* Todo "Show All" button - transparent background */
+html.canvalier-dark-mode .css-y3xyp5-view,
 html.canvalier-dark-mode .css-sd7y4c-view-link {
   background-color: transparent !important;
   background: transparent !important;
