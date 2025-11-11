@@ -358,7 +358,7 @@ html.canvalier-dark-mode .ic-app-header__menu-list-item--active {
 
 /* Badges in nav */
 html.canvalier-dark-mode .menu-item__badge {
-  background-color: #e74c3c !important;
+  background-color: #ff5555 !important;
   color: #ffffff !important;
 }
 
