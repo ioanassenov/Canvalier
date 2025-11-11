@@ -298,20 +298,39 @@ html.canvalier-dark-mode a:hover {
   color: #9ac0e8 !important;
 }
 
-/* EXCLUDE: Reset global header navigation to original Canvas styles */
-/* Reset all elements within the global header to preserve Canvas's original dark blue design */
+/* EXCLUDE: Apply consistent lighter grey to global header navigation */
+/* Left navigation panel gets a lighter grey (#4a4a4a) for distinction from main content (#373737) */
 html.canvalier-dark-mode .ic-app-header,
-html.canvalier-dark-mode .ic-app-header *,
 html.canvalier-dark-mode #header,
-html.canvalier-dark-mode #header * {
-  background-color: unset !important;
-  color: unset !important;
-  border-color: unset !important;
+html.canvalier-dark-mode .ic-app-header__main-navigation,
+html.canvalier-dark-mode .ic-app-header__secondary-navigation {
+  background-color: #4a4a4a !important;
 }
 
-html.canvalier-dark-mode .ic-app-header a:hover,
-html.canvalier-dark-mode #header a:hover {
-  background-color: unset !important;
+html.canvalier-dark-mode .ic-app-header__menu-list-item,
+html.canvalier-dark-mode .ic-app-header__menu-list-link {
+  color: #e0e0e0 !important;
+}
+
+html.canvalier-dark-mode .ic-app-header__menu-list-link:hover {
+  background-color: #5a5a5a !important;
+}
+
+/* Active nav item */
+html.canvalier-dark-mode .ic-app-header__menu-list-item--active {
+  background-color: #373737 !important;
+}
+
+/* Badges in nav */
+html.canvalier-dark-mode .menu-item__badge {
+  background-color: #e74c3c !important;
+  color: #ffffff !important;
+}
+
+/* Nav icons */
+html.canvalier-dark-mode .ic-app-header svg,
+html.canvalier-dark-mode #header svg {
+  fill: #e0e0e0 !important;
 }
 
 /* Left sidebar links */
