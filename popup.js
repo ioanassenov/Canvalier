@@ -42,6 +42,7 @@ const browserAPI = (() => {
 // DOM elements
 const toggle = document.getElementById('canvalier-toggle');
 const statusIndicator = document.getElementById('status-indicator');
+const darkModeToggle = document.getElementById('dark-mode-toggle');
 
 // Apply dark mode styling to popup
 function applyDarkModeToPopup(isDarkMode) {
@@ -58,6 +59,7 @@ async function loadDarkMode() {
     const result = await browserAPI.storage.local.get(['darkMode']);
     const isDarkMode = result.darkMode || false;
     applyDarkModeToPopup(isDarkMode);
+    darkModeToggle.checked = isDarkMode;
     console.log('Popup dark mode:', isDarkMode);
   } catch (error) {
     console.error('Error loading dark mode state:', error);
@@ -106,10 +108,34 @@ async function saveToggleState(isEnabled) {
   }
 }
 
+// Save the dark mode state (content script will sync via storage listener)
+async function saveDarkMode(isDarkMode) {
+  try {
+    // Save to storage - content script will detect change via storage listener
+    await browserAPI.storage.local.set({ darkMode: isDarkMode });
+
+    console.log('Popup saved, Dark mode:', isDarkMode);
+
+    // Apply dark mode to popup immediately
+    applyDarkModeToPopup(isDarkMode);
+
+    // Note: No need to send messages - storage change events automatically
+    // propagate to content scripts via their storage change listeners
+  } catch (error) {
+    console.error('Error saving dark mode state:', error);
+  }
+}
+
 // Handle toggle change
 toggle.addEventListener('change', async (e) => {
   const isEnabled = e.target.checked;
   await saveToggleState(isEnabled);
+});
+
+// Handle dark mode toggle change
+darkModeToggle.addEventListener('change', async (e) => {
+  const isDarkMode = e.target.checked;
+  await saveDarkMode(isDarkMode);
 });
 
 // Listen for storage changes (in case the toggle is changed from content script)
@@ -126,6 +152,9 @@ if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.onChanged)
       if (changes.darkMode) {
         const isDarkMode = changes.darkMode.newValue || false;
         applyDarkModeToPopup(isDarkMode);
+        if (darkModeToggle.checked !== isDarkMode) {
+          darkModeToggle.checked = isDarkMode;
+        }
       }
     }
   });
@@ -142,6 +171,9 @@ if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.onChanged)
       if (changes.darkMode) {
         const isDarkMode = changes.darkMode.newValue || false;
         applyDarkModeToPopup(isDarkMode);
+        if (darkModeToggle.checked !== isDarkMode) {
+          darkModeToggle.checked = isDarkMode;
+        }
       }
     }
   });
