@@ -126,6 +126,11 @@ html.canvalier-dark-mode .ToDoSidebarItem__Icon path {
   fill: #ffffff !important;
 }
 
+/* Todo "Show All" button - transparent background */
+html.canvalier-dark-mode .css-sd7y4c-view-link {
+  background-color: transparent !important;
+  background: transparent !important;
+}
 
 /* Event/feedback details - remove white gradient streak */
 html.canvalier-dark-mode .event-details,
