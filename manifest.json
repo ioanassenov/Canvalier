@@ -4,8 +4,7 @@
   "version": "1.0.1",
   "description": "Supercharge your Canvas dashboard!",
   "permissions": [
-    "storage",
-    "activeTab"
+    "storage"
   ],
   "host_permissions": [
     "https://*.instructure.com/*"
