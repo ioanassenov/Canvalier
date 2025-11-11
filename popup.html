@@ -15,8 +15,14 @@
       width: 300px;
       padding: 20px;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: #fff;
+      background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+      color: #333;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    body.dark-mode {
+      background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+      color: #e2e8f0;
     }
 
     .popup-container {
@@ -30,7 +36,11 @@
       align-items: center;
       gap: 12px;
       padding-bottom: 15px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    body.dark-mode .popup-header {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
     }
 
     .popup-icon {
@@ -50,10 +60,14 @@
     }
 
     .toggle-section {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.5);
       padding: 16px;
       border-radius: 8px;
       backdrop-filter: blur(10px);
+    }
+
+    body.dark-mode .toggle-section {
+      background: rgba(255, 255, 255, 0.08);
     }
 
     .toggle-container {
@@ -97,9 +111,13 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background-color: rgba(255, 255, 255, 0.3);
+      background-color: rgba(0, 0, 0, 0.2);
       transition: 0.3s;
       border-radius: 26px;
+    }
+
+    body.dark-mode .toggle-slider {
+      background-color: rgba(255, 255, 255, 0.2);
     }
 
     .toggle-slider:before {
@@ -109,9 +127,13 @@
       width: 20px;
       left: 3px;
       bottom: 3px;
-      background-color: white;
+      background-color: #333;
       transition: 0.3s;
       border-radius: 50%;
+    }
+
+    body.dark-mode .toggle-slider:before {
+      background-color: white;
     }
 
     input:checked + .toggle-slider {
@@ -122,24 +144,6 @@
       transform: translateX(24px);
     }
 
-    .popup-footer {
-      text-align: center;
-      font-size: 11px;
-      opacity: 0.7;
-      padding-top: 10px;
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .popup-footer a {
-      color: #fff;
-      text-decoration: none;
-      opacity: 0.9;
-    }
-
-    .popup-footer a:hover {
-      opacity: 1;
-      text-decoration: underline;
-    }
 
     .status-indicator {
       display: inline-block;
@@ -192,10 +196,6 @@
           <span class="toggle-slider"></span>
         </label>
       </div>
-    </div>
-
-    <div class="popup-footer">
-      Supercharge your Canvas dashboard!
     </div>
   </div>
 
