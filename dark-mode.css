@@ -407,18 +407,18 @@ html.canvalier-dark-mode .ic-Input {
   border-color: #555555 !important;
 }
 
-/* Buttons - but exclude color picker buttons, Show All button, dashboard options button, and close buttons */
-html.canvalier-dark-mode button:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]):not(.css-zvg8k4-closeButton button),
-html.canvalier-dark-mode .btn:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]):not(.css-zvg8k4-closeButton button),
-html.canvalier-dark-mode .Button:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]):not(.css-zvg8k4-closeButton button) {
+/* Buttons - but exclude color picker buttons, Show All button, dashboard options button, close buttons, and todo close buttons */
+html.canvalier-dark-mode button:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]):not(.css-zvg8k4-closeButton button):not(.ToDoSidebarItem__Close button),
+html.canvalier-dark-mode .btn:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]):not(.css-zvg8k4-closeButton button):not(.ToDoSidebarItem__Close button),
+html.canvalier-dark-mode .Button:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]):not(.css-zvg8k4-closeButton button):not(.ToDoSidebarItem__Close button) {
   background-color: #4a4a4a !important;
   color: #c3c3c3 !important;
   border-color: #555555 !important;
 }
 
-html.canvalier-dark-mode button:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]):not(.css-zvg8k4-closeButton button):hover,
-html.canvalier-dark-mode .btn:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]):not(.css-zvg8k4-closeButton button):hover,
-html.canvalier-dark-mode .Button:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]):not(.css-zvg8k4-closeButton button):hover {
+html.canvalier-dark-mode button:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]):not(.css-zvg8k4-closeButton button):not(.ToDoSidebarItem__Close button):hover,
+html.canvalier-dark-mode .btn:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]):not(.css-zvg8k4-closeButton button):not(.ToDoSidebarItem__Close button):hover,
+html.canvalier-dark-mode .Button:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]):not(.css-zvg8k4-closeButton button):not(.ToDoSidebarItem__Close button):hover {
   background-color: #5a5a5a !important;
 }
 
