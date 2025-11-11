@@ -132,6 +132,19 @@ html.canvalier-dark-mode .css-sd7y4c-view-link {
   background: transparent !important;
 }
 
+/* Todo close buttons - transparent background and bright icon */
+html.canvalier-dark-mode .ToDoSidebarItem__Close,
+html.canvalier-dark-mode .ToDoSidebarItem__Close button,
+html.canvalier-dark-mode .ToDoSidebarItem__Close span {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+html.canvalier-dark-mode .ToDoSidebarItem__Close svg,
+html.canvalier-dark-mode .ToDoSidebarItem__Close svg path {
+  fill: #e0e0e0 !important;
+}
+
 /* Event/feedback details - remove white gradient streak */
 html.canvalier-dark-mode .event-details,
 html.canvalier-dark-mode .event-details__title,
