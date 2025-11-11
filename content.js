@@ -1085,50 +1085,104 @@ new MutationObserver(() => {
 // Listen for storage changes (for sync between popup and content script)
 if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.onChanged) {
   chrome.storage.onChanged.addListener((changes, areaName) => {
-    if (areaName === 'local' && changes.canvalierEnabled) {
-      const newValue = changes.canvalierEnabled.newValue;
-      if (newValue !== undefined && extensionSettings.canvalierEnabled !== newValue) {
-        log('🔄', `Storage changed: Canvalier ${newValue ? 'enabled' : 'disabled'}`);
+    if (areaName === 'local') {
+      // Handle Canvalier enabled toggle
+      if (changes.canvalierEnabled) {
+        const newValue = changes.canvalierEnabled.newValue;
+        if (newValue !== undefined && extensionSettings.canvalierEnabled !== newValue) {
+          log('🔄', `Storage changed: Canvalier ${newValue ? 'enabled' : 'disabled'}`);
 
-        // Update local setting
-        extensionSettings.canvalierEnabled = newValue;
+          // Update local setting
+          extensionSettings.canvalierEnabled = newValue;
 
-        // Update the toggle in options box if it exists
-        const optionsToggle = document.querySelector('#canvalier-enabled-toggle');
-        if (optionsToggle && optionsToggle.checked !== newValue) {
-          optionsToggle.checked = newValue;
+          // Update the toggle in options box if it exists
+          const optionsToggle = document.querySelector('#canvalier-enabled-toggle');
+          if (optionsToggle && optionsToggle.checked !== newValue) {
+            optionsToggle.checked = newValue;
+          }
+
+          // Apply or remove effects
+          if (newValue) {
+            enableCanvalierEffects();
+          } else {
+            disableCanvalierEffects();
+          }
         }
+      }
 
-        // Apply or remove effects
-        if (newValue) {
-          enableCanvalierEffects();
-        } else {
-          disableCanvalierEffects();
+      // Handle dark mode toggle
+      if (changes.darkMode) {
+        const newValue = changes.darkMode.newValue;
+        if (newValue !== undefined && extensionSettings.darkMode !== newValue) {
+          log('🔄', `Storage changed: Dark mode ${newValue ? 'enabled' : 'disabled'}`);
+
+          // Update local setting
+          extensionSettings.darkMode = newValue;
+
+          // Update the toggle in options box if it exists
+          const darkModeToggle = document.querySelector('#dark-mode-toggle');
+          if (darkModeToggle && darkModeToggle.checked !== newValue) {
+            darkModeToggle.checked = newValue;
+          }
+
+          // Apply or remove dark mode
+          if (newValue) {
+            applyDarkMode();
+          } else {
+            removeDarkMode();
+          }
         }
       }
     }
   });
 } else if (typeof browser !== 'undefined' && browser.storage && browser.storage.onChanged) {
   browser.storage.onChanged.addListener((changes, areaName) => {
-    if (areaName === 'local' && changes.canvalierEnabled) {
-      const newValue = changes.canvalierEnabled.newValue;
-      if (newValue !== undefined && extensionSettings.canvalierEnabled !== newValue) {
-        log('🔄', `Storage changed: Canvalier ${newValue ? 'enabled' : 'disabled'}`);
+    if (areaName === 'local') {
+      // Handle Canvalier enabled toggle
+      if (changes.canvalierEnabled) {
+        const newValue = changes.canvalierEnabled.newValue;
+        if (newValue !== undefined && extensionSettings.canvalierEnabled !== newValue) {
+          log('🔄', `Storage changed: Canvalier ${newValue ? 'enabled' : 'disabled'}`);
 
-        // Update local setting
-        extensionSettings.canvalierEnabled = newValue;
+          // Update local setting
+          extensionSettings.canvalierEnabled = newValue;
 
-        // Update the toggle in options box if it exists
-        const optionsToggle = document.querySelector('#canvalier-enabled-toggle');
-        if (optionsToggle && optionsToggle.checked !== newValue) {
-          optionsToggle.checked = newValue;
+          // Update the toggle in options box if it exists
+          const optionsToggle = document.querySelector('#canvalier-enabled-toggle');
+          if (optionsToggle && optionsToggle.checked !== newValue) {
+            optionsToggle.checked = newValue;
+          }
+
+          // Apply or remove effects
+          if (newValue) {
+            enableCanvalierEffects();
+          } else {
+            disableCanvalierEffects();
+          }
         }
+      }
 
-        // Apply or remove effects
-        if (newValue) {
-          enableCanvalierEffects();
-        } else {
-          disableCanvalierEffects();
+      // Handle dark mode toggle
+      if (changes.darkMode) {
+        const newValue = changes.darkMode.newValue;
+        if (newValue !== undefined && extensionSettings.darkMode !== newValue) {
+          log('🔄', `Storage changed: Dark mode ${newValue ? 'enabled' : 'disabled'}`);
+
+          // Update local setting
+          extensionSettings.darkMode = newValue;
+
+          // Update the toggle in options box if it exists
+          const darkModeToggle = document.querySelector('#dark-mode-toggle');
+          if (darkModeToggle && darkModeToggle.checked !== newValue) {
+            darkModeToggle.checked = newValue;
+          }
+
+          // Apply or remove dark mode
+          if (newValue) {
+            applyDarkMode();
+          } else {
+            removeDarkMode();
+          }
         }
       }
     }
