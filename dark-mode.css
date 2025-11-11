@@ -430,6 +430,8 @@ html.canvalier-dark-mode .canvas-range-slider::-moz-range-track {
 html.canvalier-dark-mode [class*="contextView"],
 html.canvalier-dark-mode [data-position-content*="Popover"] {
   background-color: #373737 !important;
+  border-color: #555555 !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5) !important;
 }
 
 html.canvalier-dark-mode [class*="contextView__content"],
@@ -446,11 +448,13 @@ html.canvalier-dark-mode [role="tabpanel"] {
 /* Tab buttons in hamburger menu */
 html.canvalier-dark-mode [role="tab"] {
   color: #c3c3c3 !important;
+  background-color: transparent !important;
   border-color: #555555 !important;
 }
 
 html.canvalier-dark-mode [role="tab"][aria-selected="true"] {
-  color: #ffffff !important;
+  color: #7ba3d1 !important;
+  background-color: #373737 !important;
   border-bottom-color: #7ba3d1 !important;
 }
 
@@ -475,7 +479,7 @@ html.canvalier-dark-mode [class*="closeButton"] button:hover {
   background-color: #4a4a4a !important;
 }
 
-/* Canvalier enhancements border in dark mode */
+/* Canvalier enhancements - ensure dark border color */
 html.canvalier-dark-mode .canvalier-color-enhancements {
   border-top-color: #555555 !important;
 }
