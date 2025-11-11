@@ -43,6 +43,27 @@ const browserAPI = (() => {
 const toggle = document.getElementById('canvalier-toggle');
 const statusIndicator = document.getElementById('status-indicator');
 
+// Apply dark mode styling to popup
+function applyDarkModeToPopup(isDarkMode) {
+  if (isDarkMode) {
+    document.body.classList.add('dark-mode');
+  } else {
+    document.body.classList.remove('dark-mode');
+  }
+}
+
+// Load dark mode state
+async function loadDarkMode() {
+  try {
+    const result = await browserAPI.storage.local.get(['darkMode']);
+    const isDarkMode = result.darkMode || false;
+    applyDarkModeToPopup(isDarkMode);
+    console.log('Popup dark mode:', isDarkMode);
+  } catch (error) {
+    console.error('Error loading dark mode state:', error);
+  }
+}
+
 // Load the current state of the toggle
 async function loadToggleState() {
   try {
@@ -94,21 +115,33 @@ toggle.addEventListener('change', async (e) => {
 // Listen for storage changes (in case the toggle is changed from content script)
 if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.onChanged) {
   chrome.storage.onChanged.addListener((changes, areaName) => {
-    if (areaName === 'local' && changes.canvalierEnabled) {
-      const newValue = changes.canvalierEnabled.newValue;
-      if (newValue !== undefined && toggle.checked !== newValue) {
-        toggle.checked = newValue;
-        updateStatusIndicator(newValue);
+    if (areaName === 'local') {
+      if (changes.canvalierEnabled) {
+        const newValue = changes.canvalierEnabled.newValue;
+        if (newValue !== undefined && toggle.checked !== newValue) {
+          toggle.checked = newValue;
+          updateStatusIndicator(newValue);
+        }
+      }
+      if (changes.darkMode) {
+        const isDarkMode = changes.darkMode.newValue || false;
+        applyDarkModeToPopup(isDarkMode);
       }
     }
   });
 } else if (typeof browser !== 'undefined' && browser.storage && browser.storage.onChanged) {
   browser.storage.onChanged.addListener((changes, areaName) => {
-    if (areaName === 'local' && changes.canvalierEnabled) {
-      const newValue = changes.canvalierEnabled.newValue;
-      if (newValue !== undefined && toggle.checked !== newValue) {
-        toggle.checked = newValue;
-        updateStatusIndicator(newValue);
+    if (areaName === 'local') {
+      if (changes.canvalierEnabled) {
+        const newValue = changes.canvalierEnabled.newValue;
+        if (newValue !== undefined && toggle.checked !== newValue) {
+          toggle.checked = newValue;
+          updateStatusIndicator(newValue);
+        }
+      }
+      if (changes.darkMode) {
+        const isDarkMode = changes.darkMode.newValue || false;
+        applyDarkModeToPopup(isDarkMode);
       }
     }
   });
@@ -116,3 +149,4 @@ if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.onChanged)
 
 // Initialize
 loadToggleState();
+loadDarkMode();
