@@ -56,9 +56,9 @@ html.canvalier-dark-mode .ic-DashboardCard__header_content {
   background-color: transparent !important;
 }
 
-/* Course card title - background matches surrounding grey, color is dynamically set by JS */
+/* Course card title - transparent background to prevent flashing during transitions */
 html.canvalier-dark-mode .ic-DashboardCard__header-title {
-  background-color: #373737 !important;
+  background-color: transparent !important;
   /* Color is now dynamically set via JavaScript to match overlay color */
 }
 
@@ -72,7 +72,7 @@ html.canvalier-dark-mode .ic-DashboardCard__header-title div {
 }
 
 html.canvalier-dark-mode .ic-DashboardCard__header-title.ellipsis {
-  background-color: #373737 !important;
+  background-color: transparent !important;
 }
 
 html.canvalier-dark-mode .ic-DashboardCard__header-subtitle,
