@@ -486,3 +486,23 @@ html.canvalier-dark-mode .canvalier-color-enhancements {
 html.canvalier-dark-mode .canvalier-opacity-value {
   color: #c3c3c3 !important;
 }
+
+/* Menu items in Move tab */
+html.canvalier-dark-mode [class*="menuItem"] {
+  background-color: #373737 !important;
+  color: #c3c3c3 !important;
+}
+
+html.canvalier-dark-mode [class*="menuItem"]:hover {
+  background-color: #4a4a4a !important;
+}
+
+html.canvalier-dark-mode [class*="menuItem__label"] {
+  color: #c3c3c3 !important;
+}
+
+/* Menu container */
+html.canvalier-dark-mode [class*="menu"] {
+  background-color: #373737 !important;
+}
+
