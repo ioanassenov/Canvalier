@@ -334,13 +334,6 @@ const popoverModifications = {
             </div>
           </span>
         </label>
-        <div class="ColorPicker__Actions" style="margin-top: 12px;">
-          <button dir="ltr" cursor="pointer" type="button" class="css-10t32iw-view--inlineBlock-baseButton canvalier-reset-color-btn">
-            <span class="css-nkcj25-baseButton__content">
-              <span class="css-131ekwm-baseButton__children">Reset to Original Color</span>
-            </span>
-          </button>
-        </div>
       </div>
     `;
 
@@ -362,29 +355,6 @@ const popoverModifications = {
       saveSetting('imageOpacityPerCourse', extensionSettings.imageOpacityPerCourse);
       this.applyCustomImages();
       log('🎨', `Opacity changed to ${value}% for course ${courseId}`);
-    });
-
-    // Wire up the Reset Color button
-    const resetColorBtn = enhancementContainer.querySelector('.canvalier-reset-color-btn');
-    resetColorBtn.addEventListener('click', () => {
-      const card = document.querySelector(`.ic-DashboardCard a[href*="/courses/${courseId}"]`)?.closest('.ic-DashboardCard');
-      if (card) {
-        const hero = card.querySelector('.ic-DashboardCard__header_hero');
-        if (hero) {
-          const originalColor = hero.getAttribute('data-canvalier-original-color');
-          if (originalColor) {
-            hero.style.backgroundColor = originalColor;
-            hero.removeAttribute('data-canvalier-original-color');
-            // Reapply image with original color if image exists
-            if (extensionSettings.customImages[courseId]) {
-              this.applyCustomImages();
-            }
-            log('🎨', `Color reset to original for course ${courseId}`);
-          } else {
-            log('⚠️', `No original color saved for course ${courseId}`);
-          }
-        }
-      }
     });
 
     log('🎨', `Color tab enhanced for course ${courseId}`);
