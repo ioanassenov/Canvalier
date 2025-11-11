@@ -22,6 +22,11 @@ html.canvalier-dark-mode .ic-app-course-nav-toggle-and-crumbs {
   background-color: #1a1a1a !important;
 }
 
+/* Extended left panel (courses panel) - dark background */
+html.canvalier-dark-mode .css-1aicfcs-view {
+  background-color: #1a1a1a !important;
+}
+
 /* Course cards - dark styling */
 html.canvalier-dark-mode .ic-DashboardCard {
   background-color: #373737 !important;
@@ -404,6 +409,13 @@ html.canvalier-dark-mode button:not([class*="ColorPicker"]):not([class*="color-p
 html.canvalier-dark-mode .btn:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]):hover,
 html.canvalier-dark-mode .Button:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.css-sd7y4c-view-link):not([data-testid="dashboard-options-button"]):hover {
   background-color: #5a5a5a !important;
+}
+
+/* Extended courses panel close button - transparent background */
+html.canvalier-dark-mode .css-zvg8k4-closeButton,
+html.canvalier-dark-mode .css-zvg8k4-closeButton button {
+  background-color: transparent !important;
+  background: transparent !important;
 }
 
 /* Tables */
