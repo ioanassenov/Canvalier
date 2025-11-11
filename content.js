@@ -242,7 +242,7 @@ const extensionSettings = {
 
 // Load settings from browser storage
 async function loadSettings() {
-  const result = await browserAPI.storage.local.get(['canvalierEnabled', 'darkMode', 'use24HourFormat', 'showOverdue', 'showTimeRemaining', 'assignmentRangeWeeks', 'minimizedCardCount', 'hideCanvasToDo', 'hideDashboardHeader', 'hideRecentFeedback', 'hideComingUp', 'popoverModifications', 'imageOpacityPerCourse', 'markedDone']);
+  const result = await browserAPI.storage.local.get(['canvalierEnabled', 'darkMode', 'use24HourFormat', 'showOverdue', 'showTimeRemaining', 'assignmentRangeWeeks', 'minimizedCardCount', 'hideCanvasToDo', 'hideDashboardHeader', 'hideRecentFeedback', 'hideComingUp', 'customImages', 'imageOpacityPerCourse', 'markedDone']);
 
   if (result.canvalierEnabled !== undefined) {
     extensionSettings.canvalierEnabled = result.canvalierEnabled;
@@ -277,11 +277,11 @@ async function loadSettings() {
   if (result.hideComingUp !== undefined) {
     extensionSettings.hideComingUp = result.hideComingUp;
   }
-  if (result.popoverModifications !== undefined) {
-    extensionSettings.popoverModifications = result.popoverModifications;
+  if (result.customImages !== undefined) {
+    extensionSettings.customImages = result.customImages;
     console.log('📥 [CUSTOM-IMAGES DEBUG] Loaded custom images from storage:', {
-      count: Object.keys(result.popoverModifications).length,
-      images: result.popoverModifications
+      count: Object.keys(result.customImages).length,
+      images: result.customImages
     });
   }
   if (result.imageOpacityPerCourse !== undefined) {
@@ -979,14 +979,14 @@ async function init() {
     });
     log('✅', 'Options panel module initialized');
 
-    // popoverModifications is already loaded (from modules/custom-images.js in manifest)
+    // popoverModifications is already loaded (from modules/popover-modifications.js in manifest)
     popoverModifications.init({
       extensionSettings,
       saveSetting,
       log,
       getCourseId
     });
-    log('✅', 'Custom images module initialized');
+    log('✅', 'Popover modifications module initialized');
 
     // assignmentManager is already loaded (from modules/assignment-manager.js in manifest)
     assignmentManager.init({
