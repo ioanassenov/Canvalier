@@ -299,12 +299,20 @@ html.canvalier-dark-mode a:hover {
 }
 
 /* EXCLUDE: Apply consistent lighter grey to global header navigation */
-/* Left navigation panel gets a lighter grey (#4a4a4a) for distinction from main content (#373737) */
+/* Left navigation panel gets a darker grey (#373737) to match main content */
 html.canvalier-dark-mode .ic-app-header,
-html.canvalier-dark-mode #header,
+html.canvalier-dark-mode #header {
+  background-color: #4a4a4a !important;
+}
+
 html.canvalier-dark-mode .ic-app-header__main-navigation,
 html.canvalier-dark-mode .ic-app-header__secondary-navigation {
-  background-color: #4a4a4a !important;
+  background-color: #373737 !important;
+}
+
+/* Logo container - transparent background */
+html.canvalier-dark-mode .ic-app-header__logomark-container {
+  background-color: transparent !important;
 }
 
 html.canvalier-dark-mode .ic-app-header__menu-list-item,
@@ -316,9 +324,15 @@ html.canvalier-dark-mode .ic-app-header__menu-list-link:hover {
   background-color: #5a5a5a !important;
 }
 
+/* Menu item text and icon container - transparent backgrounds for proper hover effect */
+html.canvalier-dark-mode .menu-item__text,
+html.canvalier-dark-mode .menu-item-icon-container {
+  background-color: transparent !important;
+}
+
 /* Active nav item */
 html.canvalier-dark-mode .ic-app-header__menu-list-item--active {
-  background-color: #373737 !important;
+  background-color: #4a4a4a !important;
 }
 
 /* Badges in nav */
