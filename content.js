@@ -104,9 +104,9 @@ const browserAPI = (() => {
 // IMMEDIATELY apply custom images ASAP (before main init)
 // This prevents flashing of default images
 (async function() {
-  const result = await browserAPI.storage.local.get(['canvalierEnabled', 'customImages', 'imageOpacityPerCourse', 'imageOpacity']);
+  const result = await browserAPI.storage.local.get(['canvalierEnabled', 'popoverModifications', 'imageOpacityPerCourse', 'imageOpacity']);
   // Only apply if Canvalier is enabled (or undefined, meaning first run)
-  if ((result.canvalierEnabled === undefined || result.canvalierEnabled === true) && result.customImages && Object.keys(result.customImages).length > 0) {
+  if ((result.canvalierEnabled === undefined || result.canvalierEnabled === true) && result.popoverModifications && Object.keys(result.popoverModifications).length > 0) {
       console.log('🚀 Starting immediate custom image application...');
 
       const applyImages = () => {
@@ -125,7 +125,7 @@ const browserAPI = (() => {
           const header = card.querySelector('.ic-DashboardCard__header');
           if (!header) return;
 
-          const customImageUrl = result.customImages[courseId];
+          const customImageUrl = result.popoverModifications[courseId];
           if (customImageUrl) {
             // Get opacity for THIS specific course (not global)
             const courseOpacity = imageOpacityPerCourse[courseId] !== undefined ? imageOpacityPerCourse[courseId] : 70;
@@ -234,7 +234,7 @@ const extensionSettings = {
   hideDashboardHeader: false, // Default to showing dashboard header/banner
   hideRecentFeedback: false, // Default to showing Recent Feedback column
   hideComingUp: false, // Default to showing Coming Up section
-  customImages: {}, // Store custom image URLs per course: { "courseId": "imageUrl" }
+  popoverModifications: {}, // Store custom image URLs per course: { "courseId": "imageUrl" }
   imageOpacity: 70, // DEPRECATED - kept for migration, use imageOpacityPerCourse instead
   imageOpacityPerCourse: {}, // Store opacity per course: { "courseId": opacity (0-100) }
   markedDone: {} // Store marked-done assignments: { "courseId_assignmentId": { markedAt, dueDate } }
@@ -242,7 +242,7 @@ const extensionSettings = {
 
 // Load settings from browser storage
 async function loadSettings() {
-  const result = await browserAPI.storage.local.get(['canvalierEnabled', 'darkMode', 'use24HourFormat', 'showOverdue', 'showTimeRemaining', 'assignmentRangeWeeks', 'minimizedCardCount', 'hideCanvasToDo', 'hideDashboardHeader', 'hideRecentFeedback', 'hideComingUp', 'customImages', 'imageOpacityPerCourse', 'markedDone']);
+  const result = await browserAPI.storage.local.get(['canvalierEnabled', 'darkMode', 'use24HourFormat', 'showOverdue', 'showTimeRemaining', 'assignmentRangeWeeks', 'minimizedCardCount', 'hideCanvasToDo', 'hideDashboardHeader', 'hideRecentFeedback', 'hideComingUp', 'popoverModifications', 'imageOpacityPerCourse', 'markedDone']);
 
   if (result.canvalierEnabled !== undefined) {
     extensionSettings.canvalierEnabled = result.canvalierEnabled;
@@ -277,11 +277,11 @@ async function loadSettings() {
   if (result.hideComingUp !== undefined) {
     extensionSettings.hideComingUp = result.hideComingUp;
   }
-  if (result.customImages !== undefined) {
-    extensionSettings.customImages = result.customImages;
+  if (result.popoverModifications !== undefined) {
+    extensionSettings.popoverModifications = result.popoverModifications;
     console.log('📥 [CUSTOM-IMAGES DEBUG] Loaded custom images from storage:', {
-      count: Object.keys(result.customImages).length,
-      images: result.customImages
+      count: Object.keys(result.popoverModifications).length,
+      images: result.popoverModifications
     });
   }
   if (result.imageOpacityPerCourse !== undefined) {
@@ -307,9 +307,9 @@ async function saveSetting(key, value) {
 
   console.log('💾 [SAVE DEBUG] About to save to browser storage:', {
     key,
-    value: (key === 'markedDone' || key === 'customImages') ? value : '[other setting]',
+    value: (key === 'markedDone' || key === 'popoverModifications') ? value : '[other setting]',
     valueType: typeof value,
-    stringified: (key === 'markedDone' || key === 'customImages') ? JSON.stringify(value) : '[other setting]'
+    stringified: (key === 'markedDone' || key === 'popoverModifications') ? JSON.stringify(value) : '[other setting]'
   });
 
   try {
@@ -320,14 +320,14 @@ async function saveSetting(key, value) {
     } else {
       console.log('✅ [SAVE DEBUG] Successfully saved to browser storage:', {
         key,
-        valueKeys: (key === 'markedDone' || key === 'customImages') ? Object.keys(value) : '[other setting]'
+        valueKeys: (key === 'markedDone' || key === 'popoverModifications') ? Object.keys(value) : '[other setting]'
       });
 
       // Verify the save by reading it back immediately
       const result = await browserAPI.storage.local.get([key]);
       console.log('🔍 [SAVE DEBUG] Verified saved value:', {
         key,
-        savedValue: (key === 'markedDone' || key === 'customImages') ? result[key] : '[other setting]',
+        savedValue: (key === 'markedDone' || key === 'popoverModifications') ? result[key] : '[other setting]',
         matches: JSON.stringify(result[key]) === JSON.stringify(value)
       });
     }
@@ -337,10 +337,10 @@ async function saveSetting(key, value) {
   }
 }
 
-// Get opacity for a specific course (with fallback to default 70)
-// Custom Images functions (delegate to module)
+// Popover modifications functions (delegate to module)
+// Handles custom images, opacity, and color utilities
 function getOpacityForCourse(courseId) {
-  return customImages.getOpacityForCourse(courseId);
+  return popoverModifications.getOpacityForCourse(courseId);
 }
 
 // Assignment functions (delegate to module)
@@ -456,23 +456,23 @@ function getCourseId(card) {
 // Color utility functions for title color syncing
 // Color utility functions (delegate to custom images module)
 function parseRgbColor(rgbString) {
-  return customImages.parseRgbColor(rgbString);
+  return popoverModifications.parseRgbColor(rgbString);
 }
 
 function rgbToHsl(r, g, b) {
-  return customImages.rgbToHsl(r, g, b);
+  return popoverModifications.rgbToHsl(r, g, b);
 }
 
 function hslToRgb(h, s, l) {
-  return customImages.hslToRgb(h, s, l);
+  return popoverModifications.hslToRgb(h, s, l);
 }
 
 function brightenColor(rgbString, brightnessFactor = 1.5) {
-  return customImages.brightenColor(rgbString, brightnessFactor);
+  return popoverModifications.brightenColor(rgbString, brightnessFactor);
 }
 
 function applyTitleColorFromOverlay(card) {
-  customImages.applyTitleColorFromOverlay(card);
+  popoverModifications.applyTitleColorFromOverlay(card);
 }
 
 async function fetchAssignments(courseId) {
@@ -611,24 +611,24 @@ function applyDashboardHeaderVisibility() {
 
 // Apply custom images to course cards
 function applyCustomImages() {
-  customImages.applyCustomImages();
+  popoverModifications.applyCustomImages();
 }
 
 // Watch for color changes via Canvas's color picker and maintain opacity
 function setupColorChangeObserver() {
-  customImages.setupColorChangeObserver();
+  popoverModifications.setupColorChangeObserver();
 }
 
 function enhanceColorTab(popover, courseId) {
-  customImages.enhanceColorTab(popover, courseId);
+  popoverModifications.enhanceColorTab(popover, courseId);
 }
 
 function injectCustomImageTab(popover, courseId) {
-  customImages.injectCustomImageTab(popover, courseId);
+  popoverModifications.injectCustomImageTab(popover, courseId);
 }
 
 function setupCustomImageTabObserver() {
-  customImages.setupCustomImageTabObserver();
+  popoverModifications.setupCustomImageTabObserver();
 }
 
 // Options Panel functions (delegate to module)
@@ -979,8 +979,8 @@ async function init() {
     });
     log('✅', 'Options panel module initialized');
 
-    // customImages is already loaded (from modules/custom-images.js in manifest)
-    customImages.init({
+    // popoverModifications is already loaded (from modules/custom-images.js in manifest)
+    popoverModifications.init({
       extensionSettings,
       saveSetting,
       log,

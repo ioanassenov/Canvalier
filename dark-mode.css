@@ -481,3 +481,19 @@ html.canvalier-dark-mode [class*="closeButton"] button:hover {
 html.canvalier-dark-mode .canvalier-color-enhancements {
   border-top-color: #555555 !important;
 }
+
+/* Opacity value text in dark mode */
+html.canvalier-dark-mode .canvalier-opacity-value {
+  color: #c3c3c3 !important;
+}
+
+/* Reset to Original Color button in dark mode */
+html.canvalier-dark-mode .canvalier-reset-color-btn {
+  background-color: #4a4a4a !important;
+  color: #c3c3c3 !important;
+  border-color: #555555 !important;
+}
+
+html.canvalier-dark-mode .canvalier-reset-color-btn:hover {
+  background-color: #5a5a5a !important;
+}

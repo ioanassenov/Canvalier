@@ -40,7 +40,7 @@ Canvalier is a Chrome extension that enhances the Canvas LMS dashboard experienc
 - **content.js**: Main content script with core functionality (~1,145 lines)
 - **modules/**: Modular components loaded via manifest
   - **options-panel.js**: Options box creation and management (~390 lines)
-  - **custom-images.js**: Custom image functionality and color utilities (~754 lines)
+  - **popover-modifications.js**: Hamburger menu popover modifications - custom images, opacity control, and color enhancements (~754 lines)
   - **assignment-manager.js**: Assignment fetching, filtering, display, and mark-as-done tracking (~650 lines)
   - **dark-mode.js**: Dark mode application and removal (~40 lines)
 - **styles.css**: Styling for assignment summaries and options UI
@@ -58,7 +58,7 @@ The extension uses a **static module loading pattern** that complies with Manife
 "content_scripts": [{
   "js": [
     "modules/options-panel.js",
-    "modules/custom-images.js",
+    "modules/popover-modifications.js",
     "modules/assignment-manager.js",
     "modules/dark-mode.js",
     "content.js"
@@ -155,8 +155,8 @@ newModule.publicMethod();
 - Functions: `createOptionsBox()`, `insertOptionsBox()`, `setupOptionsBoxObserver()`
 - Dependencies: extensionSettings, browserAPI, saveSetting, log, various apply/toggle functions
 
-**custom-images.js** (~754 lines)
-- Custom image functionality and color utilities
+**popover-modifications.js** (~754 lines)
+- Hamburger menu popover modifications - custom images, opacity control, and color enhancements
 - Functions: `getOpacityForCourse()`, `parseRgbColor()`, `rgbToHsl()`, `hslToRgb()`, `brightenColor()`, `applyTitleColorFromOverlay()`, `applyCustomImages()`, `setupColorChangeObserver()`, `enhanceColorTab()`, `injectCustomImageTab()`, `setupCustomImageTabObserver()`
 - Dependencies: extensionSettings, saveSetting, log, getCourseId
 

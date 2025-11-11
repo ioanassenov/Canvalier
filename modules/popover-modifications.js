@@ -1,10 +1,10 @@
-// Custom Images Manager Module
-// Handles custom image functionality, opacity control, and color enhancements
+// Popover Modifications Module
+// Handles hamburger menu popover modifications: custom images, opacity control, and color enhancements
 // This file loads BEFORE content.js (declared first in manifest.json)
 
 'use strict';
 
-const customImages = {
+const popoverModifications = {
   deps: null,
 
   init(dependencies) {

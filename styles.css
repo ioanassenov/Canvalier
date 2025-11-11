@@ -530,6 +530,14 @@
   border: none;
 }
 
+/* Opacity value text styling */
+.canvalier-opacity-value {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
+  color: #2d3b45;
+  font-weight: 500;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .canvas-summary-container {
