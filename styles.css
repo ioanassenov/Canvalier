@@ -455,13 +455,6 @@
   max-height: 500px;
 }
 
-/* Ensure hamburger menu popover has proper border/shadow */
-[class*="contextView"],
-[data-position-content*="Popover"] {
-  border: 1px solid #c7cdd1;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
 /* Style the canvalier enhancements to match Canvas's design */
 .canvalier-color-enhancements {
   animation: fadeIn 0.3s ease-in;
