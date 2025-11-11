@@ -15,6 +15,31 @@ html.canvalier-dark-mode #right-side {
   color: #c3c3c3 !important;
 }
 
+/* Left navigation sidebar */
+html.canvalier-dark-mode #left-side,
+html.canvalier-dark-mode .ic-app-course-menu,
+html.canvalier-dark-mode .ic-app-course-nav-toggle-and-crumbs {
+  background-color: #1a1a1a !important;
+}
+
+/* Canvas header */
+html.canvalier-dark-mode .ic-app-header,
+html.canvalier-dark-mode #header,
+html.canvalier-dark-mode .ic-app-header__main-navigation,
+html.canvalier-dark-mode .ic-app-header__secondary-navigation {
+  background-color: #1f1f1f !important;
+  border-bottom-color: #555555 !important;
+}
+
+html.canvalier-dark-mode .ic-app-header__menu-list-item,
+html.canvalier-dark-mode .ic-app-header__menu-list-link {
+  color: #c3c3c3 !important;
+}
+
+html.canvalier-dark-mode .ic-app-header__menu-list-link:hover {
+  background-color: #373737 !important;
+}
+
 /* Course cards - dark styling */
 html.canvalier-dark-mode .ic-DashboardCard {
   background-color: #373737 !important;
@@ -282,13 +307,24 @@ html.canvalier-dark-mode .ic-DashboardCard .ic-DashboardCard__header-title * {
   color: unset !important;
 }
 
-/* Links - exclude left navigation */
-html.canvalier-dark-mode a:not(.ic-app-header__menu-list-link) {
+/* Links */
+html.canvalier-dark-mode a {
   color: #7ba3d1 !important;
 }
 
-html.canvalier-dark-mode a:not(.ic-app-header__menu-list-link):hover {
+html.canvalier-dark-mode a:hover {
   color: #9ac0e8 !important;
+}
+
+/* Left sidebar links */
+html.canvalier-dark-mode #left-side a,
+html.canvalier-dark-mode .ic-app-course-menu a {
+  color: #7ba3d1 !important;
+}
+
+html.canvalier-dark-mode #left-side a:hover,
+html.canvalier-dark-mode .ic-app-course-menu a:hover {
+  background-color: #373737 !important;
 }
 
 /* Input fields */
@@ -301,18 +337,18 @@ html.canvalier-dark-mode .ic-Input {
   border-color: #555555 !important;
 }
 
-/* Buttons - exclude color picker buttons and left navigation */
-html.canvalier-dark-mode button:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.ic-app-header__menu-list-link),
-html.canvalier-dark-mode .btn:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.ic-app-header__menu-list-link),
-html.canvalier-dark-mode .Button:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.ic-app-header__menu-list-link) {
+/* Buttons - but exclude color picker buttons */
+html.canvalier-dark-mode button:not([class*="ColorPicker"]):not([class*="color-picker"]),
+html.canvalier-dark-mode .btn:not([class*="ColorPicker"]):not([class*="color-picker"]),
+html.canvalier-dark-mode .Button:not([class*="ColorPicker"]):not([class*="color-picker"]) {
   background-color: #4a4a4a !important;
   color: #c3c3c3 !important;
   border-color: #555555 !important;
 }
 
-html.canvalier-dark-mode button:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.ic-app-header__menu-list-link):hover,
-html.canvalier-dark-mode .btn:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.ic-app-header__menu-list-link):hover,
-html.canvalier-dark-mode .Button:not([class*="ColorPicker"]):not([class*="color-picker"]):not(.ic-app-header__menu-list-link):hover {
+html.canvalier-dark-mode button:not([class*="ColorPicker"]):not([class*="color-picker"]):hover,
+html.canvalier-dark-mode .btn:not([class*="ColorPicker"]):not([class*="color-picker"]):hover,
+html.canvalier-dark-mode .Button:not([class*="ColorPicker"]):not([class*="color-picker"]):hover {
   background-color: #5a5a5a !important;
 }
 
