@@ -356,9 +356,10 @@ html.canvalier-dark-mode .ic-app-header__menu-list-item--active {
   background-color: #4a4a4a !important;
 }
 
-/* Badges in nav */
-html.canvalier-dark-mode .menu-item__badge {
-  background-color: #ff5555 !important;
+/* Badges in nav - brighter grey to stand out over icons */
+html.canvalier-dark-mode .ic-app-header .menu-item__badge,
+html.canvalier-dark-mode .ic-app-header__menu-list .menu-item__badge {
+  background-color: #7a7a7a !important;
   color: #ffffff !important;
 }
 
