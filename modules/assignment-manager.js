@@ -507,7 +507,7 @@ const assignmentManager = {
   // Insert loading placeholders immediately for instant feedback
   insertLoadingPlaceholders() {
     const { log } = this.deps;
-    const cards = document.querySelectorAll('.ic-DashboardCard');
+    const cards = document.querySelectorAll('#dashboard .ic-DashboardCard');
     log('⚡', `Inserting loading placeholders for ${cards.length} courses...`);
 
     cards.forEach(card => {
@@ -539,9 +539,7 @@ const assignmentManager = {
     const { getCourseId } = this.deps;
     const courseId = getCourseId(card);
     if (!courseId) {
-      console.warn('⚠️ Could not extract course ID from card, skipping');
-      console.warn('   Card classes:', card.className);
-      console.warn('   Has course link:', !!card.querySelector('a[href*="/courses/"]'));
+      // Silently skip - this can happen with non-course cards (e.g., from extended courses panel)
       return;
     }
 
@@ -578,7 +576,7 @@ const assignmentManager = {
   // Pre-fetch all assignments in parallel
   async prefetchAllAssignments() {
     const { getCourseId } = this.deps;
-    const cards = document.querySelectorAll('.ic-DashboardCard');
+    const cards = document.querySelectorAll('#dashboard .ic-DashboardCard');
     console.log(`🚀 Pre-fetching assignments for ${cards.length} courses in parallel...`);
 
     const fetchPromises = [];
@@ -597,7 +595,7 @@ const assignmentManager = {
   // Process all course cards
   async processCourseCards() {
     const { applyCustomImages } = this.deps;
-    const cards = document.querySelectorAll('.ic-DashboardCard');
+    const cards = document.querySelectorAll('#dashboard .ic-DashboardCard');
     console.log(`🔢 Found ${cards.length} course cards`);
 
     if (cards.length === 0) {

@@ -110,7 +110,7 @@ const browserAPI = (() => {
       console.log('🚀 Starting immediate custom image application...');
 
       const applyImages = () => {
-        const cards = document.querySelectorAll('.ic-DashboardCard');
+        const cards = document.querySelectorAll('#dashboard .ic-DashboardCard');
         let appliedCount = 0;
         const imageOpacityPerCourse = result.imageOpacityPerCourse || {};
 
@@ -183,7 +183,7 @@ const browserAPI = (() => {
         const observer = new MutationObserver(() => {
           clearTimeout(debounceTimer);
           debounceTimer = setTimeout(() => {
-            const cards = document.querySelectorAll('.ic-DashboardCard');
+            const cards = document.querySelectorAll('#dashboard .ic-DashboardCard');
             if (cards.length > 0) {
               applyImages();
             }
@@ -670,7 +670,7 @@ function setupPersistenceObserver() {
       }
 
       // Check if any course cards are missing summaries
-      const cards = document.querySelectorAll('.ic-DashboardCard');
+      const cards = document.querySelectorAll('#dashboard .ic-DashboardCard');
       let reinserted = 0;
 
       cards.forEach(card => {
@@ -733,7 +733,7 @@ function setupPersistenceObserver() {
 
     // Only insert placeholders if Canvalier is enabled
     if (extensionSettings.canvalierEnabled) {
-      const cards = document.querySelectorAll('.ic-DashboardCard');
+      const cards = document.querySelectorAll('#dashboard .ic-DashboardCard');
 
       cards.forEach(card => {
         if (!card.querySelector('.canvas-summary-container')) {
@@ -775,7 +775,7 @@ function setupPersistenceObserver() {
 
     // Only reinsert summaries if Canvalier is enabled
     if (extensionSettings.canvalierEnabled) {
-      const cards = document.querySelectorAll('.ic-DashboardCard');
+      const cards = document.querySelectorAll('#dashboard .ic-DashboardCard');
       const summaries = document.querySelectorAll('.canvas-summary-container');
 
       if (cards.length > 0 && summaries.length === 0) {
@@ -879,7 +879,7 @@ function disableCanvalierEffects() {
   }
 
   // Restore original images and colors on course cards
-  const cards = document.querySelectorAll('.ic-DashboardCard');
+  const cards = document.querySelectorAll('#dashboard .ic-DashboardCard');
   let removedImages = 0;
   cards.forEach(card => {
     const header = card.querySelector('.ic-DashboardCard__header');

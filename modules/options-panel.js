@@ -173,7 +173,7 @@ const optionsPanel = {
         // Only apply if Canvalier is enabled
         if (extensionSettings.canvalierEnabled) {
           // Refresh all assignment summaries to show new time format
-          const cards = document.querySelectorAll('.ic-DashboardCard');
+          const cards = document.querySelectorAll('#dashboard .ic-DashboardCard');
           for (const card of cards) {
             await addSummaryToCard(card);
           }
@@ -190,7 +190,7 @@ const optionsPanel = {
         // Only apply if Canvalier is enabled
         if (extensionSettings.canvalierEnabled) {
           // Refresh all assignment summaries to show/hide overdue
-          const cards = document.querySelectorAll('.ic-DashboardCard');
+          const cards = document.querySelectorAll('#dashboard .ic-DashboardCard');
           for (const card of cards) {
             await addSummaryToCard(card);
           }
@@ -207,7 +207,7 @@ const optionsPanel = {
         // Only apply if Canvalier is enabled
         if (extensionSettings.canvalierEnabled) {
           // Refresh all assignment summaries to show time remaining
-          const cards = document.querySelectorAll('.ic-DashboardCard');
+          const cards = document.querySelectorAll('#dashboard .ic-DashboardCard');
           for (const card of cards) {
             await addSummaryToCard(card);
           }
@@ -228,7 +228,7 @@ const optionsPanel = {
         // Only apply if Canvalier is enabled
         if (extensionSettings.canvalierEnabled) {
           // Refresh all assignment summaries with new range
-          const cards = document.querySelectorAll('.ic-DashboardCard');
+          const cards = document.querySelectorAll('#dashboard .ic-DashboardCard');
           for (const card of cards) {
             await addSummaryToCard(card);
           }
@@ -249,7 +249,7 @@ const optionsPanel = {
         // Only apply if Canvalier is enabled
         if (extensionSettings.canvalierEnabled) {
           // Refresh all assignment summaries with new card count
-          const cards = document.querySelectorAll('.ic-DashboardCard');
+          const cards = document.querySelectorAll('#dashboard .ic-DashboardCard');
           for (const card of cards) {
             await addSummaryToCard(card);
           }
